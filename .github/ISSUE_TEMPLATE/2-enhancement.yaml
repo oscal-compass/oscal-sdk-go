@@ -1,4 +1,4 @@
-name: Feature Request.
+name: Feature Request
 description: Help us improve OSCAL SDK Go.
 title: '[Feature]: <title>'
 labels: ["enhancement"]
@@ -7,13 +7,13 @@ body:
   - type: textarea
     attributes:
       label: Feature objectives
-      description: A concise description of the features and why it should be implemented.
+      description: A concise description of the feature and why it should be implemented.
     validations:
       required: false
   - type: textarea
     attributes:
       label: Caveats / Assumptions
-      description: A list or description of any caveats to the feature or assumption made.
+      description: A list or description of any caveats to the feature or assumptions made.
     validations:
       required: false
   - type: textarea
