@@ -27,6 +27,3 @@ go.work.sum
 # IDE things
 .idea
 .vscode
-
-# OSCAL artifacts
-oscal_complete_schema.json
