@@ -1,0 +1,10 @@
+linters:
+  enable:
+    - errcheck        # Checks for unchecked errors
+    - gosimple        # Finds code simplifications
+    - govet           # Vet checks for various errors
+    - ineffassign     # Finds useless assignments
+    - staticcheck     # Comprehensive static analysis
+    - unused          # Finds unused variables, functions, etc.
+    - gosec           # Security checks for Go code
+    - goimports       # Checks import statements are formatted
