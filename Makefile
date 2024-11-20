@@ -23,13 +23,3 @@ vet:
 lint:
 	@golangci-lint run ./...
 .PHONY: lint
-
-# For testing only
-update-schema:
-	@curl -LJO https://raw.githubusercontent.com/oscal-compass/compliance-trestle/refs/heads/develop/release-schemas/oscal_complete_schema.json
-.PHONY: update-schema
-
-# For testing only
-update-types:
-	@npx quicktype -s schema oscal_complete_schema.json --package types --omit-empty --just-types-and-package -o types/oscal_core.go --top-level OSCALModels
-.PHONY: update-types
