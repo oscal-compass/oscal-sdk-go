@@ -15,10 +15,10 @@ import (
 
 var _ Store = (*MemoryStore)(nil)
 
-// ErrRuleNotFound defines an error return when rule queries fail.
+// ErrRuleNotFound defines an error returned when rule queries fail.
 var ErrRuleNotFound = errors.New("associated rule object not found")
 
-// ErrComponentsNotFound is return during MemoryStore creation when the input
+// ErrComponentsNotFound defines an error returned during MemoryStore creation when the input
 // is invalid.
 var ErrComponentsNotFound = errors.New("no components not found")
 
