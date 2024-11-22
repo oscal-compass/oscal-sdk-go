@@ -28,7 +28,7 @@ make test-unit
 **Requires [`golangci-lint`](https://golangci-lint.run/welcome/quick-start/)**
 
 ```bash
-make fmt
+make format
 # For issue identification
 make vet
 # Linting
