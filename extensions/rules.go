@@ -2,7 +2,7 @@
 
 package extensions
 
-// Below are defined oscal.Property names for compass-based extensions
+// Below are defined oscal.Property names for compass-based extensions.
 const (
 	RuleIdProp               = "Rule_Id"
 	RuleDescriptionProp      = "Rule_Description"
