@@ -165,10 +165,12 @@ func (m *MemoryStore) FindByComponent(ctx context.Context, componentId string) (
 	}
 
 	var ruleSets []extensions.RuleSet
-	var errs error
+	var errs []error
 	for ruleId := range ruleIds {
 		ruleSet, err := m.GetByRuleID(ctx, ruleId)
-		errs = errors.Join(err)
+		if err != nil {
+			errs = append(errs, err)
+		}
 
 		// Make sure we are only returning the relevant checks for this
 		// component.
@@ -185,8 +187,9 @@ func (m *MemoryStore) FindByComponent(ctx context.Context, componentId string) (
 		ruleSets = append(ruleSets, ruleSet)
 	}
 
-	if errs != nil {
-		return ruleSets, fmt.Errorf("failed to find rules for component %q: %w", componentId, errs)
+	if len(errs) > 0 {
+		joinedErr := errors.Join(errs...)
+		return ruleSets, fmt.Errorf("failed to find rules for component %q: %w", componentId, joinedErr)
 	}
 
 	return ruleSets, nil
