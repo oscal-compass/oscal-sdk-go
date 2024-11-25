@@ -1,5 +1,5 @@
-name: New project maintainer nomination
-description: Nomination for project maintainer role
+name: Nominate a project maintainer
+description: Nomination for project maintainer role.
 title: 'Maintainer role for @'
 labels: ["nomination"]
 assignees:
