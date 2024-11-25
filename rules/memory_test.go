@@ -84,7 +84,7 @@ func TestIndexComponents(t *testing.T) {
 				definition.Components = &[]oscaltypes112.DefinedComponent{}
 			}
 
-			testMemory, err := NewMemoryStoreWithComponents(*definition.Components)
+			testMemory, err := NewMemoryStoreFromComponents(*definition.Components)
 
 			if c.expError != "" {
 				require.EqualError(t, err, c.expError)
@@ -160,7 +160,7 @@ func prepMemoryStore(t *testing.T) *MemoryStore {
 	require.NoError(t, err)
 	definition, err := generators.NewComponentDefinition(file)
 	require.NoError(t, err)
-	testMemory, err := NewMemoryStoreWithComponents(*definition.Components)
+	testMemory, err := NewMemoryStoreFromComponents(*definition.Components)
 	require.NoError(t, err)
 
 	return testMemory

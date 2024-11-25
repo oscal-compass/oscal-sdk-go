@@ -13,14 +13,16 @@ import (
 	. "github.com/oscal-compass/oscal-sdk-go/rules/internal"
 )
 
-var _ Store = (*MemoryStore)(nil)
+var (
+	// Store interface check
+	_ Store = (*MemoryStore)(nil)
 
-// ErrRuleNotFound defines an error returned when rule queries fail.
-var ErrRuleNotFound = errors.New("associated rule object not found")
-
-// ErrComponentsNotFound defines an error returned during MemoryStore creation when the input
-// is invalid.
-var ErrComponentsNotFound = errors.New("no components not found")
+	// ErrRuleNotFound defines an error returned when rule queries fail.
+	ErrRuleNotFound = errors.New("associated rule object not found")
+	// ErrComponentsNotFound defines an error returned during MemoryStore creation when the input
+	// is invalid.
+	ErrComponentsNotFound = errors.New("no components not found")
+)
 
 /*
 MemoryStore provides implementation of a memory-based rule.Store.
@@ -45,8 +47,8 @@ type MemoryStore struct {
 	checksByValidationComponent map[string]Set[string]
 }
 
-// NewMemoryStoreWithComponents creates a new memory-based rule finder.
-func NewMemoryStoreWithComponents(components []oscal112.DefinedComponent) (*MemoryStore, error) {
+// NewMemoryStoreFromComponents creates a new memory-based rule finder.
+func NewMemoryStoreFromComponents(components []oscal112.DefinedComponent) (*MemoryStore, error) {
 	if len(components) == 0 {
 		return nil, fmt.Errorf("failed to create memory store from components: %w", ErrComponentsNotFound)
 	}
