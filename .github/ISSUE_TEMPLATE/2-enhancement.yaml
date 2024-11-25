@@ -1,0 +1,28 @@
+name: Feature Request
+description: Help us improve OSCAL SDK Go.
+title: '[Feature]: <title>'
+labels: ["enhancement"]
+projects: ["oscal-compass/5"]
+body:
+  - type: textarea
+    attributes:
+      label: Feature objectives
+      description: A concise description of the feature and why it should be implemented.
+    validations:
+      required: false
+  - type: textarea
+    attributes:
+      label: Caveats / Assumptions
+      description: A list or description of any caveats to the feature or assumptions made.
+    validations:
+      required: false
+  - type: textarea
+    attributes:
+      label: Completion Criteria
+      description: A set of criteria to let us know what is in scope and when the implemented feature is complete.
+      render: markdown
+      placeholder: |
+        - [ ] Criteria 1
+        - [ ] Criteria 2
+    validations:
+      required: false
