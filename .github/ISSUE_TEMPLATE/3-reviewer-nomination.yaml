@@ -1,5 +1,5 @@
-name: New reviewer nomination
-description: Nomination for reviewer role
+name: Nominate a reviewer
+description: Nomination for reviewer role.
 title: 'Reviewer role for @'
 labels: ["nomination"]
 assignees:
