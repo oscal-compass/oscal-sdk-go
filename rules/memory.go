@@ -93,7 +93,6 @@ func (m *MemoryStore) indexComponent(component oscal112.DefinedComponent) Set[st
 		ruleSet, ok := m.nodes[ruleIdProp.Value]
 		if !ok {
 			ruleSet = extensions.RuleSet{}
-			m.nodes[ruleIdProp.Value] = ruleSet
 		}
 
 		// A check may or may not be registered.
@@ -133,7 +132,7 @@ func (m *MemoryStore) indexComponent(component oscal112.DefinedComponent) Set[st
 			m.byCheck[placeholderCheck.ID] = ruleSet.Rule.ID
 		}
 		rules.Add(ruleSet.Rule.ID)
-		m.nodes[ruleIdProp.Value] = ruleSet
+		m.nodes[ruleSet.Rule.ID] = ruleSet
 	}
 	if len(checkIds) != 0 {
 		m.checksByValidationComponent[component.Title] = checkIds
