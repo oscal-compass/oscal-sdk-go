@@ -11,7 +11,7 @@ import (
 	"github.com/oscal-compass/oscal-sdk-go/extensions"
 )
 
-// Store defines methods for parsing, storing and searching for rule sets generated based on
+// Store defines methods for filtering and searching for rule sets generated based on
 // rule/check OSCAL extensions.
 type Store interface {
 	// GetByRuleID return the rule object by the associated id or name.
