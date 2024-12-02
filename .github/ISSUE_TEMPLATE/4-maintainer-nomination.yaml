@@ -1,0 +1,41 @@
+name: New project maintainer nomination
+description: Nomination for project maintainer role
+title: 'Maintainer role for @'
+labels: ["nomination"]
+assignees:
+  - oscal-sdk-go-maintainers
+body:
+  - type: markdown
+    attributes:
+      value: |
+        *Please review our [membership documentation](https://github.com/oscal-compass/community/blob/main/MEMBERSHIP.md) for more details.*
+  - type: input
+    validations:
+      required: true
+    attributes:
+      label: GitHub username
+      description: The GitHub username for the nominee
+  - type: checkboxes
+    id: requirement
+    attributes:
+      label: Eligibility
+      description: |
+        Please confirm the following requirements are met.
+      options:
+        - label: The nominee has been a Member for at least 1 month.
+  - type: textarea
+    validations:
+      required: true
+    attributes:
+      label: Sponsors
+      description: |
+        List the GitHub usernames of the two project Maintainers who are sponsoring the application.
+        The sponsors need to be contact ahead of the application.
+      placeholder: |
+        @sponsor1
+        @sponsor2
+  - type: textarea
+    attributes:
+      label: Contributions
+      description: |
+        Provide a list of contributions the nominee has made to the project or provide justification for role change.
