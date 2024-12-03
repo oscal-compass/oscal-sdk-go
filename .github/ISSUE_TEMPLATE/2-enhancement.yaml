@@ -1,6 +1,6 @@
 name: Feature Request
 description: Help us improve OSCAL SDK Go.
-title: '[Feature]: <title>'
+title: 'Feature: <title>'
 labels: ["enhancement"]
 projects: ["oscal-compass/5"]
 body:
@@ -20,7 +20,6 @@ body:
     attributes:
       label: Completion Criteria
       description: A set of criteria to let us know what is in scope and when the implemented feature is complete.
-      render: markdown
       placeholder: |
         - [ ] Criteria 1
         - [ ] Criteria 2
