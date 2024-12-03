@@ -8,3 +8,5 @@ linters:
     - unused          # Finds unused variables, functions, etc.
     - gosec           # Security checks for Go code
     - goimports       # Checks import statements are formatted
+    - gofmt           # Checks whether code was gofmt-ed
+
