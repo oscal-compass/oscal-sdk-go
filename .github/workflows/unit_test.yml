@@ -1,0 +1,33 @@
+name: unit-test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  unit-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the code from the repository
+      - name: Checkout code
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+
+      # Step 2: Set up Go environment
+      - name: Set up Go
+        uses: actions/setup-go@41dfa10bad2bb2ae585af6ee5bb4d7d973ad74ed # v5
+        with:
+          go-version-file: './go.mod'
+
+      # Step 3: Install Go dependencies (modules)
+      - name: Install dependencies
+        run: go mod tidy  # This ensures Go dependencies are up-to-date
+
+      # Step 4: Run Go tests
+      - name: Run unit tests
+        run: go test -v ./...
