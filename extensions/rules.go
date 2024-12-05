@@ -1,8 +1,11 @@
-// SPDX-License-Identifier: Apache-2.0
+/*
+ Copyright 2024 The OSCAL Compass Authors
+ SPDX-License-Identifier: Apache-2.0
+*/
 
 package extensions
 
-// Below are defined oscal.Property names for compass-based extensions
+// Below are defined oscal.Property names for compass-based extensions.
 const (
 	RuleIdProp               = "Rule_Id"
 	RuleDescriptionProp      = "Rule_Description"

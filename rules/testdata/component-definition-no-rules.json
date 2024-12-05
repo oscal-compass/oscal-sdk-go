@@ -1,0 +1,58 @@
+{
+  "component-definition": {
+    "uuid": "c14d8812-7098-4a9b-8f89-cba41b6ff0d8",
+    "metadata": {
+      "title": "Component definition",
+      "last-modified": "2023-02-21T06:53:42+00:00",
+      "version": "1.1",
+      "oscal-version": "1.0.2"
+    },
+    "components": [
+      {
+        "uuid": "c8106bc8-5174-4e86-91a4-52f2fe0ed027",
+        "type": "service",
+        "title": "Kubernetes",
+        "description": "Kubernetes",
+        "control-implementations": [
+          {
+            "uuid": "f79d6290-8efa-4ea7-b931-27b8435cf707",
+            "source": "profiles/cis/profile.json",
+            "description": "CIS Profile",
+            "implemented-requirements": [
+              {
+                "uuid": "a1b5b713-52c7-46fb-ab57-ebac7f576b23",
+                "control-id": "CIS-2.1",
+                "description": ""
+              },
+              {
+                "uuid": "bd737295-2dd9-436d-89b4-54a581afa154",
+                "control-id": "CIS-2.2",
+                "description": ""
+              },
+              {
+                "uuid": "a463ae43-f562-434e-a3a4-2eaed2cbec59",
+                "control-id": "CIS-2.3",
+                "description": ""
+              },
+              {
+                "uuid": "22d8d502-a9c2-444a-9a3e-e55c1405f42c",
+                "control-id": "CIS-2.4",
+                "description": ""
+              },
+              {
+                "uuid": "e297ed7f-7a8f-44ed-af58-78b0693f3f4b",
+                "control-id": "CIS-2.5",
+                "description": ""
+              },
+              {
+                "uuid": "13c6e9ee-1c85-440a-bbe9-6a54498fcde2",
+                "control-id": "CIS-2.6",
+                "description": ""
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
