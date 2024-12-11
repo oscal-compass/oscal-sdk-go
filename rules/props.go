@@ -6,8 +6,11 @@
 package rules
 
 import (
+	"strings"
+
 	oscal112 "github.com/defenseunicorns/go-oscal/src/types/oscal-1-1-2"
 
+	"github.com/oscal-compass/oscal-sdk-go/extensions"
 	. "github.com/oscal-compass/oscal-sdk-go/rules/internal"
 )
 
@@ -30,10 +33,11 @@ func groupPropsByRemarks(props []oscal112.Property) map[string]Set[oscal112.Prop
 	return grouped
 }
 
-// findProp finds a property in a set by the property name.
-func findProp(name string, props Set[oscal112.Property]) (oscal112.Property, bool) {
+// getProp finds a property in a set by the property name. This also implicitly checks the property is a
+// trestle-defined property in the namespace.
+func getProp(name string, props Set[oscal112.Property]) (oscal112.Property, bool) {
 	for prop := range props {
-		if prop.Name == name {
+		if prop.Name == name && strings.Contains(prop.Ns, extensions.TrestleNameSpace) {
 			return prop, true
 		}
 	}

@@ -85,7 +85,7 @@ func (m *MemoryStore) indexComponent(component oscal112.DefinedComponent) Set[st
 	// Each rule set is linked by a group id in the property remarks
 	byRemarks := groupPropsByRemarks(*component.Props)
 	for _, propSet := range byRemarks {
-		ruleIdProp, ok := findProp(extensions.RuleIdProp, propSet)
+		ruleIdProp, ok := getProp(extensions.RuleIdProp, propSet)
 		if !ok {
 			continue
 		}
