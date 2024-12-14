@@ -48,7 +48,7 @@ var (
 	}
 )
 
-func TestIndexComponents(t *testing.T) {
+func TestMemoryStore_IndexAll(t *testing.T) {
 	tests := []struct {
 		name         string
 		testDataPath string
@@ -57,7 +57,7 @@ func TestIndexComponents(t *testing.T) {
 	}{
 		{
 			name:         "Valid/WithRules",
-			testDataPath: "testdata/component-definition-test.json",
+			testDataPath: "../testdata/component-definition-test.json",
 			wantNodes: map[string]extensions.RuleSet{
 				"etcd_key_file": expectedKeyFileRule,
 
@@ -66,13 +66,13 @@ func TestIndexComponents(t *testing.T) {
 		},
 		{
 			name:         "Valid/NoRules",
-			testDataPath: "testdata/component-definition-no-rules.json",
+			testDataPath: "../testdata/component-definition-no-rules.json",
 			wantNodes:    map[string]extensions.RuleSet{},
 		},
 		{
 			name:         "Failure/NoComponents",
-			testDataPath: "testdata/component-definition-no-components.json",
-			expError:     "failed to create memory store from components: no components not found",
+			testDataPath: "../testdata/component-definition-no-components.json",
+			expError:     "failed to index components: no components not found",
 		},
 	}
 
@@ -87,7 +87,8 @@ func TestIndexComponents(t *testing.T) {
 				definition.Components = &[]oscaltypes112.DefinedComponent{}
 			}
 
-			testMemory, err := NewMemoryStoreFromComponents(*definition.Components)
+			testMemory := NewMemoryStore()
+			err = testMemory.IndexAll(*definition.Components)
 
 			if c.expError != "" {
 				require.EqualError(t, err, c.expError)
@@ -157,13 +158,14 @@ func TestMemoryStore_FindByComponent(t *testing.T) {
 }
 
 func prepMemoryStore(t *testing.T) *MemoryStore {
-	testDataPath := "testdata/component-definition-test.json"
+	testDataPath := "../testdata/component-definition-test.json"
 
 	file, err := os.Open(testDataPath)
 	require.NoError(t, err)
 	definition, err := generators.NewComponentDefinition(file)
 	require.NoError(t, err)
-	testMemory, err := NewMemoryStoreFromComponents(*definition.Components)
+	testMemory := NewMemoryStore()
+	err = testMemory.IndexAll(*definition.Components)
 	require.NoError(t, err)
 
 	return testMemory

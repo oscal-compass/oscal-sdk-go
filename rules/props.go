@@ -11,7 +11,7 @@ import (
 	oscal112 "github.com/defenseunicorns/go-oscal/src/types/oscal-1-1-2"
 
 	"github.com/oscal-compass/oscal-sdk-go/extensions"
-	. "github.com/oscal-compass/oscal-sdk-go/rules/internal"
+	. "github.com/oscal-compass/oscal-sdk-go/internal/container"
 )
 
 // groupPropsByRemarks will return the properties group by the same
