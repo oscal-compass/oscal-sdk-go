@@ -13,7 +13,7 @@ import (
 	oscal112 "github.com/defenseunicorns/go-oscal/src/types/oscal-1-1-2"
 
 	"github.com/oscal-compass/oscal-sdk-go/extensions"
-	. "github.com/oscal-compass/oscal-sdk-go/internal/container"
+	"github.com/oscal-compass/oscal-sdk-go/internal/set"
 )
 
 var (
@@ -42,10 +42,10 @@ type MemoryStore struct {
 
 	// rulesByComponent stores the component title of any component
 	// mapped to any relevant rules.
-	rulesByComponent map[string]Set[string]
+	rulesByComponent map[string]set.Set[string]
 	// checksByValidationComponent store checkId mapped to validation
 	// component title to filter check information on rules.
-	checksByValidationComponent map[string]Set[string]
+	checksByValidationComponent map[string]set.Set[string]
 }
 
 // NewMemoryStore creates a new memory-based Store.
@@ -53,8 +53,8 @@ func NewMemoryStore() *MemoryStore {
 	return &MemoryStore{
 		nodes:                       make(map[string]extensions.RuleSet),
 		byCheck:                     make(map[string]string),
-		rulesByComponent:            make(map[string]Set[string]),
-		checksByValidationComponent: make(map[string]Set[string]),
+		rulesByComponent:            make(map[string]set.Set[string]),
+		checksByValidationComponent: make(map[string]set.Set[string]),
 	}
 }
 
@@ -72,15 +72,15 @@ func (m *MemoryStore) IndexAll(components []oscal112.DefinedComponent) error {
 	return nil
 }
 
-func (m *MemoryStore) indexComponent(component oscal112.DefinedComponent) Set[string] {
-	rules := NewSet[string]()
+func (m *MemoryStore) indexComponent(component oscal112.DefinedComponent) set.Set[string] {
+	rules := set.New[string]()
 	if component.Props == nil {
 		return rules
 	}
 
 	// Catalog all registered check implementations by validation component for filtering in
 	// `rules.FindByComponent`.
-	checkIds := NewSet[string]()
+	checkIds := set.New[string]()
 
 	// Each rule set is linked by a group id in the property remarks
 	byRemarks := groupPropsByRemarks(*component.Props)
