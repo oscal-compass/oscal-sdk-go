@@ -143,15 +143,19 @@ func TestMemoryStore_FindByComponent(t *testing.T) {
 	testMemory := prepMemoryStore(t)
 	testCtx := context.Background()
 
-	validatorRuleSet, err := testMemory.FindByComponent(testCtx, "Validator")
-	require.NoError(t, err)
 	softwareRuleSet, err := testMemory.FindByComponent(testCtx, "Kubernetes")
 	require.NoError(t, err)
 
-	require.Contains(t, validatorRuleSet, expectedCertFileRule)
-	require.Contains(t, validatorRuleSet, expectedKeyFileRule)
 	require.Contains(t, softwareRuleSet, expectedCertFileRule)
 	require.Contains(t, softwareRuleSet, expectedKeyFileRule)
+
+	validator1RuleSet, err := testMemory.FindByComponent(testCtx, "Validator")
+	require.NoError(t, err)
+	require.Contains(t, validator1RuleSet, expectedKeyFileRule)
+
+	validator2RuleSet, err := testMemory.FindByComponent(testCtx, "Validator2")
+	require.NoError(t, err)
+	require.Contains(t, validator2RuleSet, expectedCertFileRule)
 
 	_, err = testMemory.FindByComponent(testCtx, "not_a_component")
 	require.EqualError(t, err, "failed to find rules for component \"not_a_component\"")

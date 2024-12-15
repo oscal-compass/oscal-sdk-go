@@ -87,30 +87,6 @@
           {
             "name": "Rule_Id",
             "ns": "https://oscal-compass.github.io/compliance-trestle/schemas/oscal/cd",
-            "value": "etcd_cert_file",
-            "remarks": "rule_set_08"
-          },
-          {
-            "name": "Rule_Description",
-            "ns": "https://oscal-compass.github.io/compliance-trestle/schemas/oscal/cd",
-            "value": "Ensure that the --cert-file argument is set as appropriate",
-            "remarks": "rule_set_08"
-          },
-          {
-            "name": "Check_Id",
-            "ns": "https://oscal-compass.github.io/compliance-trestle/schemas/oscal/cd",
-            "value": "etcd_cert_file",
-            "remarks": "rule_set_08"
-          },
-          {
-            "name": "Check_Description",
-            "ns": "https://oscal-compass.github.io/compliance-trestle/schemas/oscal/cd",
-            "value": "Check that the --cert-file argument is set as appropriate",
-            "remarks": "rule_set_08"
-          },
-          {
-            "name": "Rule_Id",
-            "ns": "https://oscal-compass.github.io/compliance-trestle/schemas/oscal/cd",
             "value": "etcd_key_file",
             "remarks": "rule_set_09"
           },
@@ -131,6 +107,38 @@
             "ns": "https://oscal-compass.github.io/compliance-trestle/schemas/oscal/cd",
             "value": "Check that the --key-file argument is set as appropriate",
             "remarks": "rule_set_09"
+          }
+        ]
+      },
+      {
+        "uuid": "701c70f1-482b-42b0-a419-9870158cd9e2",
+        "type": "validation",
+        "title": "Validator2",
+        "description": "An example validation component",
+        "props": [
+          {
+            "name": "Rule_Id",
+            "ns": "https://oscal-compass.github.io/compliance-trestle/schemas/oscal/cd",
+            "value": "etcd_cert_file",
+            "remarks": "rule_set_08"
+          },
+          {
+            "name": "Rule_Description",
+            "ns": "https://oscal-compass.github.io/compliance-trestle/schemas/oscal/cd",
+            "value": "Ensure that the --cert-file argument is set as appropriate",
+            "remarks": "rule_set_08"
+          },
+          {
+            "name": "Check_Id",
+            "ns": "https://oscal-compass.github.io/compliance-trestle/schemas/oscal/cd",
+            "value": "etcd_cert_file",
+            "remarks": "rule_set_08"
+          },
+          {
+            "name": "Check_Description",
+            "ns": "https://oscal-compass.github.io/compliance-trestle/schemas/oscal/cd",
+            "value": "Check that the --cert-file argument is set as appropriate",
+            "remarks": "rule_set_08"
           }
         ]
       }
