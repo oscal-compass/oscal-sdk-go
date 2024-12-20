@@ -11,20 +11,15 @@ import (
 	"github.com/oscal-compass/oscal-sdk-go/extensions"
 )
 
-// Store defines methods for filtering and searching for rule sets generated based on
-// rule/check OSCAL extensions.
+// Store provides methods for filtering and searching RuleSets generated from OSCAL rule/check extensions.
 type Store interface {
-	// GetByRuleID return the rule object by the associated id or name.
+	// GetByRuleID returns the RuleSet associated with the given rule ID.
 	GetByRuleID(ctx context.Context, ruleID string) (extensions.RuleSet, error)
-	// GetByCheckID returns rule object by the associated check id.
+	// GetByCheckID returns the RuleSet associated with the given check ID.
 	GetByCheckID(ctx context.Context, checkID string) (extensions.RuleSet, error)
-
-	// FindByComponent find rule objects by the associated component title.
-	// Note that if a component is of type validation, this should only return
-	// checks relevant to that validation component. Target component types (non-validation) should
-	// return all information.
-	FindByComponent(ctx context.Context, componentID string) ([]extensions.RuleSet, error)
-
-	// All lists all indexed rules.
-	All(ctx context.Context) ([]extensions.RuleSet, error)
+	// FindByComponent returns RuleSets associated with the component ID.
+	//
+	// For validation components, only relevant checks are returned.
+	// For non-validation or "target" components, all information is returned.
+	FindByComponent(ctx context.Context, componentId string) ([]extensions.RuleSet, error)
 }

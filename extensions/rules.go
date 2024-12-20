@@ -5,17 +5,6 @@
 
 package extensions
 
-// Below are defined oscal.Property names for compass-based extensions.
-const (
-	RuleIdProp               = "Rule_Id"
-	RuleDescriptionProp      = "Rule_Description"
-	CheckIdProp              = "Check_Id"
-	CheckDescriptionProp     = "Check_Description"
-	ParameterIdProp          = "Parameter_Id"
-	ParameterDescriptionProp = "Parameter_Description"
-	ParameterDefaultProp     = "Parameter_Value_Default"
-)
-
 // RuleSet defines a Rule instance with associated
 // Check implementation data.
 type RuleSet struct {
