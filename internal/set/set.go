@@ -3,13 +3,13 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package internal
+package set
 
 // Set represents a set data structure.
 type Set[T comparable] map[T]struct{}
 
-// NewSet returns an initialized set.
-func NewSet[T comparable]() Set[T] {
+// New NewSet returns an initialized set.
+func New[T comparable]() Set[T] {
 	return make(Set[T])
 }
 
@@ -22,4 +22,16 @@ func (s Set[T]) Add(item T) {
 func (s Set[T]) Has(item T) bool {
 	_, ok := s[item]
 	return ok
+}
+
+// Intersect returns a new Set representing the intersection
+// between two sets.
+func (s Set[T]) Intersect(other Set[T]) Set[T] {
+	newSet := New[T]()
+	for elem := range s {
+		if _, ok := other[elem]; ok {
+			newSet.Add(elem)
+		}
+	}
+	return newSet
 }
