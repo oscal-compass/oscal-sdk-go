@@ -13,6 +13,7 @@ import (
 	oscalTypes "github.com/defenseunicorns/go-oscal/src/types/oscal-1-1-2"
 
 	"github.com/oscal-compass/oscal-sdk-go/extensions"
+	"github.com/oscal-compass/oscal-sdk-go/internal/set"
 )
 
 var _ Settings = (*ImplementationSettings)(nil)
@@ -23,6 +24,9 @@ type ImplementationSettings struct {
 	// requirementSettings defines settings for RuleSets at the
 	// implemented requirement/individual control level.
 	requirementSettings map[string]RequirementSettings
+	// controlsByRules stores controlsIDs that have specific
+	// rules mapped.
+	controlsByRules map[string]set.Set[string]
 	// settings defines the settings for the
 	// overall implementation of the requirements.
 	settings RequirementSettings
@@ -36,6 +40,7 @@ func NewImplementationSettings(controlImplementation oscalTypes.ControlImplement
 			mappedRules:        map[string]struct{}{},
 			selectedParameters: make(map[string]string),
 		},
+		controlsByRules: make(map[string]set.Set[string]),
 	}
 	if controlImplementation.SetParameters != nil {
 		setParameters(*controlImplementation.SetParameters, implementation.settings.selectedParameters)
@@ -44,6 +49,12 @@ func NewImplementationSettings(controlImplementation oscalTypes.ControlImplement
 	for _, implementedReq := range controlImplementation.ImplementedRequirements {
 		requirement := NewSettingsFromImplementedRequirement(implementedReq)
 		for mappedRule := range requirement.mappedRules {
+			controlSet, ok := implementation.controlsByRules[mappedRule]
+			if !ok {
+				controlSet = set.New[string]()
+			}
+			controlSet.Add(implementedReq.ControlId)
+			implementation.controlsByRules[mappedRule] = controlSet
 			implementation.settings.mappedRules.Add(mappedRule)
 		}
 		implementation.requirementSettings[implementedReq.ControlId] = requirement
@@ -68,6 +79,19 @@ func (i *ImplementationSettings) ByControlID(controlId string) (RequirementSetti
 		return RequirementSettings{}, fmt.Errorf("control %s not found in settings", controlId)
 	}
 	return requirement, nil
+}
+
+// ApplicableControls finds controls that are applicable to a given rule.
+func (i *ImplementationSettings) ApplicableControls(ruleId string) ([]string, error) {
+	controls, ok := i.controlsByRules[ruleId]
+	if !ok {
+		return nil, fmt.Errorf("rule id %s not found in settings", ruleId)
+	}
+	var controlsList []string
+	for control := range controls {
+		controlsList = append(controlsList, control)
+	}
+	return controlsList, nil
 }
 
 // GetFrameworkShortName returns the human-readable short name for the control source in a

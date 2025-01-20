@@ -10,7 +10,7 @@ import (
 	"errors"
 	"fmt"
 
-	oscal112 "github.com/defenseunicorns/go-oscal/src/types/oscal-1-1-2"
+	"github.com/oscal-compass/oscal-sdk-go/models/components"
 
 	"github.com/oscal-compass/oscal-sdk-go/extensions"
 	"github.com/oscal-compass/oscal-sdk-go/internal/set"
@@ -59,22 +59,22 @@ func NewMemoryStore() *MemoryStore {
 }
 
 // IndexAll indexes rule information from OSCAL Components.
-func (m *MemoryStore) IndexAll(components []oscal112.DefinedComponent) error {
+func (m *MemoryStore) IndexAll(components []components.Component) error {
 	if len(components) == 0 {
 		return fmt.Errorf("failed to index components: %w", ErrComponentsNotFound)
 	}
 	for _, component := range components {
 		extractedRules := m.indexComponent(component)
 		if len(extractedRules) != 0 {
-			m.rulesByComponent[component.Title] = extractedRules
+			m.rulesByComponent[component.Title()] = extractedRules
 		}
 	}
 	return nil
 }
 
-func (m *MemoryStore) indexComponent(component oscal112.DefinedComponent) set.Set[string] {
+func (m *MemoryStore) indexComponent(component components.Component) set.Set[string] {
 	rules := set.New[string]()
-	if component.Props == nil {
+	if len(component.Props()) == 0 {
 		return rules
 	}
 
@@ -83,7 +83,7 @@ func (m *MemoryStore) indexComponent(component oscal112.DefinedComponent) set.Se
 	checkIds := set.New[string]()
 
 	// Each rule set is linked by a group id in the property remarks
-	byRemarks := groupPropsByRemarks(*component.Props)
+	byRemarks := groupPropsByRemarks(component.Props())
 	for _, propSet := range byRemarks {
 		ruleIdProp, ok := getProp(extensions.RuleIdProp, propSet)
 		if !ok {
@@ -135,7 +135,7 @@ func (m *MemoryStore) indexComponent(component oscal112.DefinedComponent) set.Se
 		m.nodes[ruleSet.Rule.ID] = ruleSet
 	}
 	if len(checkIds) != 0 {
-		m.checksByValidationComponent[component.Title] = checkIds
+		m.checksByValidationComponent[component.Title()] = checkIds
 	}
 
 	return rules

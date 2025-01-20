@@ -101,6 +101,14 @@ func TestFramework(t *testing.T) {
 				selectedParameters: map[string]string{},
 			},
 		},
+		controlsByRules: map[string]set.Set[string]{
+			"etcd_cert_file": {
+				"CIS-2.1": struct{}{},
+			},
+			"etcd_key_file": {
+				"CIS-2.1": struct{}{},
+			},
+		},
 	}
 
 	require.Equal(t, expectedSettings, implementationsMap)
