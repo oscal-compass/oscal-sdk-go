@@ -7,8 +7,6 @@ package settings
 
 import (
 	"fmt"
-	"path/filepath"
-	"strings"
 
 	oscalTypes "github.com/defenseunicorns/go-oscal/src/types/oscal-1-1-2"
 
@@ -16,27 +14,25 @@ import (
 	"github.com/oscal-compass/oscal-sdk-go/internal/set"
 )
 
-var _ Settings = (*ImplementationSettings)(nil)
-
 // ImplementationSettings defines settings for RuleSets defined at the control
-// implementation level.
+// implementation and control level.
 type ImplementationSettings struct {
-	// requirementSettings defines settings for RuleSets at the
+	// implementedReqSettings defines settings for RuleSets at the
 	// implemented requirement/individual control level.
-	requirementSettings map[string]RequirementSettings
+	implementedReqSettings map[string]Settings
 	// controlsByRules stores controlsIDs that have specific
 	// rules mapped.
 	controlsByRules map[string]set.Set[string]
 	// settings defines the settings for the
 	// overall implementation of the requirements.
-	settings RequirementSettings
+	settings Settings
 }
 
 // NewImplementationSettings returned ImplementationSettings for an OSCAL ControlImplementationSet.
 func NewImplementationSettings(controlImplementation oscalTypes.ControlImplementationSet) *ImplementationSettings {
 	implementation := &ImplementationSettings{
-		requirementSettings: make(map[string]RequirementSettings),
-		settings: RequirementSettings{
+		implementedReqSettings: make(map[string]Settings),
+		settings: Settings{
 			mappedRules:        map[string]struct{}{},
 			selectedParameters: make(map[string]string),
 		},
@@ -48,6 +44,10 @@ func NewImplementationSettings(controlImplementation oscalTypes.ControlImplement
 
 	for _, implementedReq := range controlImplementation.ImplementedRequirements {
 		requirement := NewSettingsFromImplementedRequirement(implementedReq)
+		// Do not add requirements without mapped rules
+		if len(requirement.mappedRules) == 0 {
+			continue
+		}
 		for mappedRule := range requirement.mappedRules {
 			controlSet, ok := implementation.controlsByRules[mappedRule]
 			if !ok {
@@ -57,26 +57,32 @@ func NewImplementationSettings(controlImplementation oscalTypes.ControlImplement
 			implementation.controlsByRules[mappedRule] = controlSet
 			implementation.settings.mappedRules.Add(mappedRule)
 		}
-		implementation.requirementSettings[implementedReq.ControlId] = requirement
+		implementation.implementedReqSettings[implementedReq.ControlId] = requirement
 	}
 
 	return implementation
 }
 
-func (i *ImplementationSettings) ApplyParameterSettings(set extensions.RuleSet) extensions.RuleSet {
-	return i.settings.ApplyParameterSettings(set)
+// AllSettings returns all settings collected for the overall control implementation.
+func (i *ImplementationSettings) AllSettings() Settings {
+	return i.settings
 }
 
-func (i *ImplementationSettings) ContainsRule(ruleId string) bool {
-	return i.settings.ContainsRule(ruleId)
+// AllControls returns a list of control ids found in the control implementation.
+func (i *ImplementationSettings) AllControls() []string {
+	var allControls []string
+	for controlId := range i.implementedReqSettings {
+		allControls = append(allControls, controlId)
+	}
+	return allControls
 }
 
 // ByControlID returns the individual requirement settings for a given control id in the
 // control implementation.
-func (i *ImplementationSettings) ByControlID(controlId string) (RequirementSettings, error) {
-	requirement, ok := i.requirementSettings[controlId]
+func (i *ImplementationSettings) ByControlID(controlId string) (Settings, error) {
+	requirement, ok := i.implementedReqSettings[controlId]
 	if !ok {
-		return RequirementSettings{}, fmt.Errorf("control %s not found in settings", controlId)
+		return Settings{}, fmt.Errorf("control %s not found in settings", controlId)
 	}
 	return requirement, nil
 }
@@ -94,50 +100,50 @@ func (i *ImplementationSettings) ApplicableControls(ruleId string) ([]string, er
 	return controlsList, nil
 }
 
-// GetFrameworkShortName returns the human-readable short name for the control source in a
-// control implementation set and whether this value is populated.
-//
-// This function checks the associated properties and falls back to the implementation
-// Source reference.
-func GetFrameworkShortName(implementation oscalTypes.ControlImplementationSet) (string, bool) {
-	const (
-		expectedPathParts = 3
-		modelIDIndex      = 1
-		filenameIndex     = 2
-	)
-	// Looks for the property, fallback to parsing it out of the control source href.
-	if implementation.Props != nil {
-		property, found := extensions.GetTrestleProp(extensions.FrameworkProp, *implementation.Props)
-		if found {
-			return property.Value, true
+// merge another ControlImplementationSet into the ImplementationSettings. This also merged existing
+// settings at the requirements level.
+func (i *ImplementationSettings) merge(inputImplementation oscalTypes.ControlImplementationSet) {
+	if inputImplementation.SetParameters != nil {
+		setParameters(*inputImplementation.SetParameters, i.settings.selectedParameters)
+	}
+
+	for _, implementedReq := range inputImplementation.ImplementedRequirements {
+		requirement, ok := i.implementedReqSettings[implementedReq.ControlId]
+		if !ok {
+			requirement = NewSettingsFromImplementedRequirement(implementedReq)
+			// Do not add requirements without mapped rules
+			if len(requirement.mappedRules) == 0 {
+				continue
+			}
+			for mappedRule := range requirement.mappedRules {
+				controlSet, ok := i.controlsByRules[mappedRule]
+				if !ok {
+					controlSet = set.New[string]()
+				}
+				controlSet.Add(implementedReq.ControlId)
+				i.controlsByRules[mappedRule] = controlSet
+				i.settings.mappedRules.Add(mappedRule)
+			}
+		} else {
+			if implementedReq.Props != nil {
+				mappedRulesProps := extensions.FindAllProps(extensions.RuleIdProp, *implementedReq.Props)
+				for _, mappedRule := range mappedRulesProps {
+					controlSet, ok := i.controlsByRules[mappedRule.Value]
+					if !ok {
+						controlSet = set.New[string]()
+					}
+					controlSet.Add(implementedReq.ControlId)
+					i.controlsByRules[mappedRule.Value] = controlSet
+					i.settings.mappedRules.Add(mappedRule.Value)
+					requirement.mappedRules.Add(mappedRule.Value)
+				}
+			}
+
+			if implementedReq.SetParameters != nil {
+				setParameters(*implementedReq.SetParameters, requirement.selectedParameters)
+			}
 		}
+
+		i.implementedReqSettings[implementedReq.ControlId] = requirement
 	}
-
-	// Fallback to the control source string based on trestle
-	// workspace conventions of $MODEL/$MODEL_ID/$MODEL.json.
-	cleanedSource := filepath.Clean(implementation.Source)
-	parts := strings.Split(cleanedSource, "/")
-	if len(parts) == expectedPathParts && strings.HasSuffix(parts[filenameIndex], ".json") {
-		return parts[modelIDIndex], true
-	}
-
-	return "", false
-}
-
-// Framework returns ImplementationSettings from a list of OSCAL Control Implementations for a given framework.
-func Framework(framework string, controlImplementations []oscalTypes.ControlImplementationSet) (*ImplementationSettings, error) {
-	var implementationSettings *ImplementationSettings
-
-	for _, controlImplementation := range controlImplementations {
-		frameworkShortName, found := GetFrameworkShortName(controlImplementation)
-		if found && frameworkShortName == framework {
-			implementationSettings = NewImplementationSettings(controlImplementation)
-			break
-		}
-	}
-
-	if implementationSettings == nil {
-		return implementationSettings, fmt.Errorf("framework %s is not in control implementations", framework)
-	}
-	return implementationSettings, nil
 }

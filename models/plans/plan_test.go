@@ -14,8 +14,11 @@ import (
 	oscalTypes "github.com/defenseunicorns/go-oscal/src/types/oscal-1-1-2"
 	"github.com/stretchr/testify/require"
 
+	"github.com/oscal-compass/oscal-sdk-go/extensions"
 	"github.com/oscal-compass/oscal-sdk-go/generators"
+	"github.com/oscal-compass/oscal-sdk-go/models"
 	"github.com/oscal-compass/oscal-sdk-go/models/components"
+	"github.com/oscal-compass/oscal-sdk-go/rules"
 	"github.com/oscal-compass/oscal-sdk-go/settings"
 )
 
@@ -27,7 +30,7 @@ func TestGenerateAssessmentPlan(t *testing.T) {
 	tests := []struct {
 		name            string
 		inputComponents []components.Component
-		inputSetting    *settings.ImplementationSettings
+		inputSetting    settings.ImplementationSettings
 		inputOptions    []GenerateOption
 		assertFunc      func(*testing.T, *oscalTypes.AssessmentPlan)
 		expError        string
@@ -38,10 +41,16 @@ func TestGenerateAssessmentPlan(t *testing.T) {
 			inputSetting:    defaultSettings,
 			inputOptions:    nil,
 			assertFunc: func(t *testing.T, plan *oscalTypes.AssessmentPlan) {
-				require.Len(t, *plan.LocalDefinitions.Activities, 4)
+				// Validate the "shape" of the assessment plan
+				require.Len(t, *plan.LocalDefinitions.Activities, 2)
 				require.Len(t, *plan.AssessmentAssets.Components, 2)
 				require.Len(t, *plan.AssessmentSubjects, 1)
 				require.Len(t, plan.ReviewedControls.ControlSelections, 1)
+				require.Len(t, *plan.AssessmentAssets.Components, 2)
+
+				// Validate default string
+				require.Equal(t, plan.Metadata.Title, models.DefaultRequiredString)
+				require.Equal(t, plan.ImportSsp.Href, models.DefaultRequiredString)
 			},
 			expError: "",
 		},
@@ -79,6 +88,59 @@ func TestGenerateAssessmentPlan(t *testing.T) {
 	}
 }
 
+func TestActivitiesForComponent(t *testing.T) {
+	compDef := readCompDef(t)
+	testComponents := prepComponents(t, compDef)
+	defaultSettings := prepSettings(t, compDef)
+
+	memoryStore := rules.NewMemoryStore()
+	require.NoError(t, memoryStore.IndexAll(testComponents))
+
+	gotActivities, err := ActivitiesForComponent(context.TODO(), "TestKubernetes", memoryStore, defaultSettings)
+	require.NoError(t, err)
+
+	require.Len(t, gotActivities, 2)
+
+	var gotActivity oscalTypes.Activity
+	for _, activity := range gotActivities {
+		if activity.Title == "etcd_key_file" {
+			gotActivity = activity
+			break
+		}
+	}
+
+	require.Equal(t, gotActivity.Description, "Ensure that the --key-file argument is set as appropriate")
+	require.Len(t, *gotActivity.Steps, 1)
+
+	expectedControls := &oscalTypes.ReviewedControls{
+		ControlSelections: []oscalTypes.AssessedControls{
+			{
+				IncludeControls: &[]oscalTypes.AssessedControlsSelectControlById{
+					{
+						ControlId: "CIS-2.1",
+					},
+				},
+			},
+		},
+	}
+	require.Equal(t, expectedControls, gotActivity.RelatedControls)
+
+	expectedProps := []oscalTypes.Property{
+		{
+			Name:  "method",
+			Value: "TEST",
+		},
+		{
+			Name:  "file_name",
+			Value: "file_name_override",
+			Ns:    extensions.TrestleNameSpace,
+			Class: "test-parameter",
+		},
+	}
+	require.NotNil(t, gotActivity.Props)
+	require.Equal(t, expectedProps, *gotActivity.Props)
+
+}
 func readCompDef(t *testing.T) oscalTypes.ComponentDefinition {
 	testDataPath := filepath.Join("../../testdata", "component-definition-test.json")
 
@@ -100,7 +162,7 @@ func prepComponents(t *testing.T, definition oscalTypes.ComponentDefinition) []c
 	return comps
 }
 
-func prepSettings(t *testing.T, definition oscalTypes.ComponentDefinition) *settings.ImplementationSettings {
+func prepSettings(t *testing.T, definition oscalTypes.ComponentDefinition) settings.ImplementationSettings {
 	var allImplementations []oscalTypes.ControlImplementationSet
 	for _, component := range *definition.Components {
 		if component.ControlImplementations == nil {
@@ -110,5 +172,5 @@ func prepSettings(t *testing.T, definition oscalTypes.ComponentDefinition) *sett
 	}
 	impSettings, err := settings.Framework("cis", allImplementations)
 	require.NoError(t, err)
-	return impSettings
+	return *impSettings
 }

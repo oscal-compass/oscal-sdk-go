@@ -22,7 +22,7 @@ func TestDefinedComponentAdapter(t *testing.T) {
 	comps := *definition.Components
 	require.Len(t, comps, 3)
 	adapter := NewDefinedComponentAdapter(comps[0])
-	require.Equal(t, "Kubernetes", adapter.Title())
+	require.Equal(t, "TestKubernetes", adapter.Title())
 	require.Equal(t, Service, adapter.Type())
 	require.Equal(t, "c8106bc8-5174-4e86-91a4-52f2fe0ed027", adapter.UUID())
 	require.Len(t, adapter.Props(), 6)

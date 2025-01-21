@@ -6,17 +6,17 @@
 package components
 
 import (
-	oscaltypes112 "github.com/defenseunicorns/go-oscal/src/types/oscal-1-1-2"
+	oscalTypes "github.com/defenseunicorns/go-oscal/src/types/oscal-1-1-2"
 )
 
 // ComponentConverter defines methods to convert and/or retrieve OSCAL Component underlying types.
 type ComponentConverter interface {
 	// AsDefinedComponent returns a DefinedComponent and whether the
 	// retrieval or conversion was successful.
-	AsDefinedComponent() (oscaltypes112.DefinedComponent, bool)
+	AsDefinedComponent() (oscalTypes.DefinedComponent, bool)
 	// AsSystemComponent returns a SystemComponent and whether the
 	// retrieve or conversion was successful.
-	AsSystemComponent() (oscaltypes112.SystemComponent, bool)
+	AsSystemComponent() (oscalTypes.SystemComponent, bool)
 }
 
 // Component defines methods to retrieve common information from OSCAL Component types.
@@ -28,7 +28,7 @@ type Component interface {
 	// UUID returns the component UUID
 	UUID() string
 	// Props returns a list of OSCAL properties associated with the component.
-	Props() []oscaltypes112.Property
+	Props() []oscalTypes.Property
 	ComponentConverter
 }
 

@@ -14,7 +14,7 @@ Below is a table to show what is currently supported by the SDK.
 | OSCAL Schema Validation                   |           |
 | Target Components Extension               |           |
 | Multiple Parameters per Rule              |           |
-| OSCAL to OSCAL Transformation             |           |
+| OSCAL to OSCAL Transformation             | &#10003;  |
 | OSCAL Constraints Validation              |           |
 
 ## Run tests

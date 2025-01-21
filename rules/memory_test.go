@@ -150,7 +150,7 @@ func TestMemoryStore_FindByComponent(t *testing.T) {
 	testMemory := prepMemoryStore(t)
 	testCtx := context.Background()
 
-	softwareRuleSet, err := testMemory.FindByComponent(testCtx, "Kubernetes")
+	softwareRuleSet, err := testMemory.FindByComponent(testCtx, "TestKubernetes")
 	require.NoError(t, err)
 
 	require.Contains(t, softwareRuleSet, expectedCertFileRule)

@@ -1,7 +1,7 @@
 package components
 
 import (
-	oscaltypes112 "github.com/defenseunicorns/go-oscal/src/types/oscal-1-1-2"
+	oscalTypes "github.com/defenseunicorns/go-oscal/src/types/oscal-1-1-2"
 
 	"github.com/oscal-compass/oscal-sdk-go/models"
 )
@@ -11,12 +11,12 @@ var _ Component = (*DefinedComponentAdapter)(nil)
 // DefinedComponentAdapter wrapped an OSCAL DefinedComponent to
 // provide methods for compatibility with Component.
 type DefinedComponentAdapter struct {
-	definedComp oscaltypes112.DefinedComponent
+	definedComp oscalTypes.DefinedComponent
 }
 
 // NewDefinedComponentAdapter returns an initialized DefinedComponentAdapter from a given
 // DefinedComponent.
-func NewDefinedComponentAdapter(definedComponent oscaltypes112.DefinedComponent) *DefinedComponentAdapter {
+func NewDefinedComponentAdapter(definedComponent oscalTypes.DefinedComponent) *DefinedComponentAdapter {
 	return &DefinedComponentAdapter{
 		definedComp: definedComponent,
 	}
@@ -34,12 +34,12 @@ func (d *DefinedComponentAdapter) Type() ComponentType {
 	return ComponentType(d.definedComp.Type)
 }
 
-func (d *DefinedComponentAdapter) AsDefinedComponent() (oscaltypes112.DefinedComponent, bool) {
+func (d *DefinedComponentAdapter) AsDefinedComponent() (oscalTypes.DefinedComponent, bool) {
 	return d.definedComp, true
 }
 
-func (d *DefinedComponentAdapter) AsSystemComponent() (oscaltypes112.SystemComponent, bool) {
-	return oscaltypes112.SystemComponent{
+func (d *DefinedComponentAdapter) AsSystemComponent() (oscalTypes.SystemComponent, bool) {
+	return oscalTypes.SystemComponent{
 		Description:      d.definedComp.Description,
 		Links:            d.definedComp.Links,
 		Props:            d.definedComp.Props,
@@ -47,7 +47,7 @@ func (d *DefinedComponentAdapter) AsSystemComponent() (oscaltypes112.SystemCompo
 		Purpose:          d.definedComp.Purpose,
 		Remarks:          d.definedComp.Remarks,
 		ResponsibleRoles: d.definedComp.ResponsibleRoles,
-		Status: oscaltypes112.SystemComponentStatus{
+		Status: oscalTypes.SystemComponentStatus{
 			State: models.DefaultRequiredString,
 		},
 		Title: d.definedComp.Title,
@@ -56,9 +56,9 @@ func (d *DefinedComponentAdapter) AsSystemComponent() (oscaltypes112.SystemCompo
 	}, true
 }
 
-func (d *DefinedComponentAdapter) Props() []oscaltypes112.Property {
+func (d *DefinedComponentAdapter) Props() []oscalTypes.Property {
 	if d.definedComp.Props == nil {
-		return []oscaltypes112.Property{}
+		return []oscalTypes.Property{}
 	}
 	return *d.definedComp.Props
 }
