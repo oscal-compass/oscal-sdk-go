@@ -13,7 +13,7 @@ import (
 	oscal112 "github.com/defenseunicorns/go-oscal/src/types/oscal-1-1-2"
 
 	"github.com/oscal-compass/oscal-sdk-go/extensions"
-	. "github.com/oscal-compass/oscal-sdk-go/rules/internal"
+	"github.com/oscal-compass/oscal-sdk-go/internal/set"
 )
 
 var (
@@ -27,10 +27,8 @@ var (
 	ErrComponentsNotFound = errors.New("no components not found")
 )
 
-/*
-MemoryStore provides implementation of a memory-based rule.Store.
-WARNING: This implementation is not thread safe.
-*/
+// MemoryStore implements the Store interface using an in-memory map-based data structure.
+// WARNING: This implementation is not thread safe.
 type MemoryStore struct {
 	// nodes saves the rule ID map keys, which are used with
 	// the other fields.
@@ -44,48 +42,50 @@ type MemoryStore struct {
 
 	// rulesByComponent stores the component title of any component
 	// mapped to any relevant rules.
-	rulesByComponent map[string]Set[string]
+	rulesByComponent map[string]set.Set[string]
 	// checksByValidationComponent store checkId mapped to validation
 	// component title to filter check information on rules.
-	checksByValidationComponent map[string]Set[string]
+	checksByValidationComponent map[string]set.Set[string]
 }
 
-// NewMemoryStoreFromComponents creates a new memory-based rule finder.
-func NewMemoryStoreFromComponents(components []oscal112.DefinedComponent) (*MemoryStore, error) {
-	if len(components) == 0 {
-		return nil, fmt.Errorf("failed to create memory store from components: %w", ErrComponentsNotFound)
-	}
-	store := &MemoryStore{
+// NewMemoryStore creates a new memory-based Store.
+func NewMemoryStore() *MemoryStore {
+	return &MemoryStore{
 		nodes:                       make(map[string]extensions.RuleSet),
 		byCheck:                     make(map[string]string),
-		rulesByComponent:            make(map[string]Set[string]),
-		checksByValidationComponent: make(map[string]Set[string]),
+		rulesByComponent:            make(map[string]set.Set[string]),
+		checksByValidationComponent: make(map[string]set.Set[string]),
 	}
-
-	for _, component := range components {
-		extractedRules := store.indexComponent(component)
-		if len(extractedRules) != 0 {
-			store.rulesByComponent[component.Title] = extractedRules
-		}
-	}
-
-	return store, nil
 }
 
-func (m *MemoryStore) indexComponent(component oscal112.DefinedComponent) Set[string] {
-	rules := NewSet[string]()
+// IndexAll indexes rule information from OSCAL Components.
+func (m *MemoryStore) IndexAll(components []oscal112.DefinedComponent) error {
+	if len(components) == 0 {
+		return fmt.Errorf("failed to index components: %w", ErrComponentsNotFound)
+	}
+	for _, component := range components {
+		extractedRules := m.indexComponent(component)
+		if len(extractedRules) != 0 {
+			m.rulesByComponent[component.Title] = extractedRules
+		}
+	}
+	return nil
+}
+
+func (m *MemoryStore) indexComponent(component oscal112.DefinedComponent) set.Set[string] {
+	rules := set.New[string]()
 	if component.Props == nil {
 		return rules
 	}
 
 	// Catalog all registered check implementations by validation component for filtering in
 	// `rules.FindByComponent`.
-	checkIds := NewSet[string]()
+	checkIds := set.New[string]()
 
 	// Each rule set is linked by a group id in the property remarks
 	byRemarks := groupPropsByRemarks(*component.Props)
 	for _, propSet := range byRemarks {
-		ruleIdProp, ok := findProp(extensions.RuleIdProp, propSet)
+		ruleIdProp, ok := getProp(extensions.RuleIdProp, propSet)
 		if !ok {
 			continue
 		}
@@ -191,13 +191,5 @@ func (m *MemoryStore) FindByComponent(ctx context.Context, componentId string) (
 		return ruleSets, fmt.Errorf("failed to find rules for component %q: %w", componentId, joinedErr)
 	}
 
-	return ruleSets, nil
-}
-
-func (m *MemoryStore) All(ctx context.Context) ([]extensions.RuleSet, error) {
-	var ruleSets []extensions.RuleSet
-	for _, rule := range m.nodes {
-		ruleSets = append(ruleSets, rule)
-	}
 	return ruleSets, nil
 }
