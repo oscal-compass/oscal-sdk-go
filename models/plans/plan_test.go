@@ -16,7 +16,6 @@ import (
 
 	"github.com/oscal-compass/oscal-sdk-go/extensions"
 	"github.com/oscal-compass/oscal-sdk-go/generators"
-	"github.com/oscal-compass/oscal-sdk-go/models"
 	"github.com/oscal-compass/oscal-sdk-go/models/components"
 	"github.com/oscal-compass/oscal-sdk-go/rules"
 	"github.com/oscal-compass/oscal-sdk-go/settings"
@@ -49,8 +48,8 @@ func TestGenerateAssessmentPlan(t *testing.T) {
 				require.Len(t, *plan.AssessmentAssets.Components, 2)
 
 				// Validate default string
-				require.Equal(t, plan.Metadata.Title, models.DefaultRequiredString)
-				require.Equal(t, plan.ImportSsp.Href, models.DefaultRequiredString)
+				require.Equal(t, plan.Metadata.Title, generators.SampleRequiredString)
+				require.Equal(t, plan.ImportSsp.Href, generators.SampleRequiredString)
 			},
 			expError: "",
 		},

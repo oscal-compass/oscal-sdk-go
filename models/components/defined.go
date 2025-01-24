@@ -3,7 +3,7 @@ package components
 import (
 	oscalTypes "github.com/defenseunicorns/go-oscal/src/types/oscal-1-1-2"
 
-	"github.com/oscal-compass/oscal-sdk-go/models"
+	"github.com/oscal-compass/oscal-sdk-go/generators"
 )
 
 var _ Component = (*DefinedComponentAdapter)(nil)
@@ -48,7 +48,7 @@ func (d *DefinedComponentAdapter) AsSystemComponent() (oscalTypes.SystemComponen
 		Remarks:          d.definedComp.Remarks,
 		ResponsibleRoles: d.definedComp.ResponsibleRoles,
 		Status: oscalTypes.SystemComponentStatus{
-			State: models.DefaultRequiredString,
+			State: generators.SampleRequiredString,
 		},
 		Title: d.definedComp.Title,
 		Type:  d.definedComp.Type,

@@ -8,32 +8,31 @@ package plans
 import (
 	"context"
 	"fmt"
-	"time"
 
 	"github.com/defenseunicorns/go-oscal/src/pkg/uuid"
 	oscalTypes "github.com/defenseunicorns/go-oscal/src/types/oscal-1-1-2"
 
 	"github.com/oscal-compass/oscal-sdk-go/extensions"
-	"github.com/oscal-compass/oscal-sdk-go/models"
+	"github.com/oscal-compass/oscal-sdk-go/generators"
 	"github.com/oscal-compass/oscal-sdk-go/models/components"
 	"github.com/oscal-compass/oscal-sdk-go/rules"
 	"github.com/oscal-compass/oscal-sdk-go/settings"
 )
 
 const (
-	defaultVersion     = "0.1.0"
 	defaultSubjectType = "component"
 	defaultTaskType    = "action"
 )
 
 type generateOpts struct {
-	title     string
-	importSSP string
+	title           string
+	importSSP       string
+	localComponents []string
 }
 
 func (g *generateOpts) defaults() {
-	g.title = models.DefaultRequiredString
-	g.importSSP = models.DefaultRequiredString
+	g.title = generators.SampleRequiredString
+	g.importSSP = generators.SampleRequiredString
 }
 
 // GenerateOption defines an option to tune the behavior of the
@@ -56,6 +55,16 @@ func WithImport(importSSP string) GenerateOption {
 	}
 }
 
+// WithLocalComponents is a GenerateOptions that determine which components
+// the `comps` argument in GenerateAssessmentPlan will be written to Components under
+// LocalDefinitions. This would denote that these component are not defined in the SSP
+// if the `WithImport` options is also used.
+func WithLocalComponents(localComponents []string) GenerateOption {
+	return func(opts *generateOpts) {
+		opts.localComponents = localComponents
+	}
+}
+
 // GenerateAssessmentPlan generates an AssessmentPlan for a set of Components and ImplementationSettings. The chosen inputs allow an Assessment Plan to be generated from
 // a set of OSCAL ComponentDefinitions or a SystemSecurityPlan.
 func GenerateAssessmentPlan(ctx context.Context, comps []components.Component, implementationSettings settings.ImplementationSettings, opts ...GenerateOption) (*oscalTypes.AssessmentPlan, error) {
@@ -67,7 +76,7 @@ func GenerateAssessmentPlan(ctx context.Context, comps []components.Component, i
 
 	memoryStore := rules.NewMemoryStore()
 	if err := memoryStore.IndexAll(comps); err != nil {
-		return nil, fmt.Errorf("failed processing comps for assessment plan %q: %w", options.title, err)
+		return nil, fmt.Errorf("failed processing components for assessment plan %q: %w", options.title, err)
 	}
 
 	ruleBasedTask := oscalTypes.Task{
@@ -111,17 +120,15 @@ func GenerateAssessmentPlan(ctx context.Context, comps []components.Component, i
 	}
 	*ruleBasedTask.Subjects = append(*ruleBasedTask.Subjects, oscalTypes.AssessmentSubject{IncludeSubjects: &subjectSelectors})
 
+	metadata := generators.NewSampleMetadata()
+	metadata.Title = options.title
+
 	assessmentPlan := &oscalTypes.AssessmentPlan{
 		UUID: uuid.NewUUID(),
 		ImportSsp: oscalTypes.ImportSsp{
 			Href: options.importSSP,
 		},
-		Metadata: oscalTypes.Metadata{
-			Title:        options.title,
-			LastModified: time.Now(),
-			OscalVersion: models.OSCALVersion,
-			Version:      defaultVersion,
-		},
+		Metadata: metadata,
 		AssessmentSubjects: &[]oscalTypes.AssessmentSubject{
 			{
 				IncludeSubjects: &subjectSelectors,
@@ -260,7 +267,7 @@ func AssessmentAssets(comps []components.Component) oscalTypes.AssessmentAssets 
 	// AssessmentPlatforms is a required field under AssessmentAssets
 	assessmentPlatform := oscalTypes.AssessmentPlatform{
 		UUID:           uuid.NewUUID(),
-		Title:          models.DefaultRequiredString,
+		Title:          generators.SampleRequiredString,
 		UsesComponents: &usedComponents,
 	}
 	assessmentAssets := oscalTypes.AssessmentAssets{
