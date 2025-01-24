@@ -10,7 +10,6 @@ import (
 
 	oscalTypes "github.com/defenseunicorns/go-oscal/src/types/oscal-1-1-2"
 
-	"github.com/oscal-compass/oscal-sdk-go/extensions"
 	"github.com/oscal-compass/oscal-sdk-go/internal/set"
 )
 
@@ -18,49 +17,21 @@ import (
 // implementation and control level.
 type ImplementationSettings struct {
 	// implementedReqSettings defines settings for RuleSets at the
-	// implemented requirement/individual control level.
+	// implemented requirement/statement level.
 	implementedReqSettings map[string]Settings
-	// controlsByRules stores controlsIDs that have specific
-	// rules mapped.
-	controlsByRules map[string]set.Set[string]
 	// settings defines the settings for the
 	// overall implementation of the requirements.
 	settings Settings
-}
 
-// NewImplementationSettings returned ImplementationSettings for an OSCAL ControlImplementationSet.
-func NewImplementationSettings(controlImplementation oscalTypes.ControlImplementationSet) *ImplementationSettings {
-	implementation := &ImplementationSettings{
-		implementedReqSettings: make(map[string]Settings),
-		settings: Settings{
-			mappedRules:        map[string]struct{}{},
-			selectedParameters: make(map[string]string),
-		},
-		controlsByRules: make(map[string]set.Set[string]),
-	}
-	if controlImplementation.SetParameters != nil {
-		setParameters(*controlImplementation.SetParameters, implementation.settings.selectedParameters)
-	}
+	// Below are mapping with information about implemented
+	// controls indexed
 
-	for _, implementedReq := range controlImplementation.ImplementedRequirements {
-		requirement := NewSettingsFromImplementedRequirement(implementedReq)
-		// Do not add requirements without mapped rules
-		if len(requirement.mappedRules) == 0 {
-			continue
-		}
-		for mappedRule := range requirement.mappedRules {
-			controlSet, ok := implementation.controlsByRules[mappedRule]
-			if !ok {
-				controlSet = set.New[string]()
-			}
-			controlSet.Add(implementedReq.ControlId)
-			implementation.controlsByRules[mappedRule] = controlSet
-			implementation.settings.mappedRules.Add(mappedRule)
-		}
-		implementation.implementedReqSettings[implementedReq.ControlId] = requirement
-	}
-
-	return implementation
+	// controls saves the control ID map keys, which are used with
+	// the other fields to retrieve information about controls.
+	controlsById map[string]oscalTypes.AssessedControlsSelectControlById
+	// controlsByRules stores controlsIDs that have specific
+	// rules mapped.
+	controlsByRules map[string]set.Set[string]
 }
 
 // AllSettings returns all settings collected for the overall control implementation.
@@ -68,11 +39,12 @@ func (i *ImplementationSettings) AllSettings() Settings {
 	return i.settings
 }
 
-// AllControls returns a list of control ids found in the control implementation.
-func (i *ImplementationSettings) AllControls() []string {
-	var allControls []string
-	for controlId := range i.implementedReqSettings {
-		allControls = append(allControls, controlId)
+// AllControls returns AssessedControlsSelectControlByID with all controls and associated statements that are applicable to
+// the control implementation.
+func (i *ImplementationSettings) AllControls() []oscalTypes.AssessedControlsSelectControlById {
+	var allControls []oscalTypes.AssessedControlsSelectControlById
+	for _, assessedControls := range i.controlsById {
+		allControls = append(allControls, assessedControls)
 	}
 	return allControls
 }
@@ -87,21 +59,26 @@ func (i *ImplementationSettings) ByControlID(controlId string) (Settings, error)
 	return requirement, nil
 }
 
-// ApplicableControls finds controls that are applicable to a given rule.
-func (i *ImplementationSettings) ApplicableControls(ruleId string) ([]string, error) {
+// ApplicableControls finds controls and corresponding statements that are applicable to a given rule based in the control
+// implementation.
+func (i *ImplementationSettings) ApplicableControls(ruleId string) ([]oscalTypes.AssessedControlsSelectControlById, error) {
 	controls, ok := i.controlsByRules[ruleId]
 	if !ok {
 		return nil, fmt.Errorf("rule id %s not found in settings", ruleId)
 	}
-	var controlsList []string
+	var assessedControls []oscalTypes.AssessedControlsSelectControlById
 	for control := range controls {
-		controlsList = append(controlsList, control)
+		assessedControl, ok := i.controlsById[control]
+		if !ok {
+			return nil, fmt.Errorf("assessed control object %s not found for rule %s", control, ruleId)
+		}
+		assessedControls = append(assessedControls, assessedControl)
 	}
-	return controlsList, nil
+	return assessedControls, nil
 }
 
-// merge another ControlImplementationSet into the ImplementationSettings. This also merged existing
-// settings at the requirements level.
+// merge another ImplementationSettings into the ImplementationSettings. Existing settings at the
+// requirements level are also merged.
 func (i *ImplementationSettings) merge(inputImplementation oscalTypes.ControlImplementationSet) {
 	if inputImplementation.SetParameters != nil {
 		setParameters(*inputImplementation.SetParameters, i.settings.selectedParameters)
@@ -110,12 +87,15 @@ func (i *ImplementationSettings) merge(inputImplementation oscalTypes.ControlImp
 	for _, implementedReq := range inputImplementation.ImplementedRequirements {
 		requirement, ok := i.implementedReqSettings[implementedReq.ControlId]
 		if !ok {
-			requirement = NewSettingsFromImplementedRequirement(implementedReq)
-			// Do not add requirements without mapped rules
-			if len(requirement.mappedRules) == 0 {
+			newRequirementForImplementation(implementedReq, i)
+		} else {
+
+			inputRequirement := settingsFromImplementedRequirement(implementedReq)
+			if len(inputRequirement.mappedRules) == 0 {
 				continue
 			}
-			for mappedRule := range requirement.mappedRules {
+
+			for mappedRule := range inputRequirement.mappedRules {
 				controlSet, ok := i.controlsByRules[mappedRule]
 				if !ok {
 					controlSet = set.New[string]()
@@ -123,27 +103,12 @@ func (i *ImplementationSettings) merge(inputImplementation oscalTypes.ControlImp
 				controlSet.Add(implementedReq.ControlId)
 				i.controlsByRules[mappedRule] = controlSet
 				i.settings.mappedRules.Add(mappedRule)
+				requirement.mappedRules.Add(mappedRule)
 			}
-		} else {
-			if implementedReq.Props != nil {
-				mappedRulesProps := extensions.FindAllProps(extensions.RuleIdProp, *implementedReq.Props)
-				for _, mappedRule := range mappedRulesProps {
-					controlSet, ok := i.controlsByRules[mappedRule.Value]
-					if !ok {
-						controlSet = set.New[string]()
-					}
-					controlSet.Add(implementedReq.ControlId)
-					i.controlsByRules[mappedRule.Value] = controlSet
-					i.settings.mappedRules.Add(mappedRule.Value)
-					requirement.mappedRules.Add(mappedRule.Value)
-				}
+			for name, value := range inputRequirement.selectedParameters {
+				requirement.selectedParameters[name] = value
 			}
-
-			if implementedReq.SetParameters != nil {
-				setParameters(*implementedReq.SetParameters, requirement.selectedParameters)
-			}
+			i.implementedReqSettings[implementedReq.ControlId] = requirement
 		}
-
-		i.implementedReqSettings[implementedReq.ControlId] = requirement
 	}
 }

@@ -22,7 +22,7 @@ func TestMerge(t *testing.T) {
 	tests := []struct {
 		name                string
 		inputImplementation oscalTypes.ControlImplementationSet
-		assertFunc          func(t *testing.T, settings *ImplementationSettings)
+		wantSettings        ImplementationSettings
 	}{
 		{
 			name: "Valid/ImplementationOnly",
@@ -43,26 +43,78 @@ func TestMerge(t *testing.T) {
 								Ns:    extensions.TrestleNameSpace,
 							},
 						},
+						Statements: &[]oscalTypes.ControlStatementImplementation{
+							{
+								Props: &[]oscalTypes.Property{
+									{
+										Name:  extensions.RuleIdProp,
+										Value: "my-test-rule-2",
+										Ns:    extensions.TrestleNameSpace,
+									},
+								},
+							},
+						},
 					},
 				},
 			},
-			assertFunc: func(t *testing.T, impSettings *ImplementationSettings) {
-				settings := impSettings.AllSettings()
-				require.NotNil(t, settings)
-				require.True(t, settings.ContainsRule("my-test-rule"))
-				applicationControls, err := impSettings.ApplicableControls("my-test-rule")
-				require.NoError(t, err)
-				require.Len(t, applicationControls, 1)
-				require.Equal(t, applicationControls[0], "ex-1")
-				require.Contains(t, settings.selectedParameters, "my-test-param")
+			wantSettings: ImplementationSettings{
+				settings: Settings{
+					mappedRules: set.Set[string]{
+						"etcd_cert_file": struct{}{},
+						"etcd_key_file":  struct{}{},
+						"my-test-rule":   struct{}{},
+						"my-test-rule-2": struct{}{},
+					},
+					selectedParameters: map[string]string{
+						"my-test-param": "test-value",
+					},
+				},
+				implementedReqSettings: map[string]Settings{
+					"CIS-2.1": {
+						mappedRules: set.Set[string]{
+							"etcd_cert_file": struct{}{},
+							"etcd_key_file":  struct{}{},
+						},
+						selectedParameters: map[string]string{},
+					},
+					"ex-1": {
+						mappedRules: set.Set[string]{
+							"my-test-rule":   struct{}{},
+							"my-test-rule-2": struct{}{},
+						},
+						selectedParameters: map[string]string{},
+					},
+				},
+				controlsByRules: map[string]set.Set[string]{
+					"etcd_cert_file": {
+						"CIS-2.1": struct{}{},
+					},
+					"etcd_key_file": {
+						"CIS-2.1": struct{}{},
+					},
+					"my-test-rule": {
+						"ex-1": struct{}{},
+					},
+					"my-test-rule-2": {
+						"ex-1": struct{}{},
+					},
+				},
+				controlsById: map[string]oscalTypes.AssessedControlsSelectControlById{
+					"CIS-2.1": {
+						ControlId: "CIS-2.1",
+					},
+					"ex-1": {
+						ControlId: "ex-1",
+					},
+				},
 			},
 		},
 		{
-			name: "Valid/ControlLevel",
+			name: "Valid/ExistingControl",
 			inputImplementation: oscalTypes.ControlImplementationSet{
 				ImplementedRequirements: []oscalTypes.ImplementedRequirementControlImplementation{
 					{
-						ControlId: "ex-1",
+						ControlId: "CIS-2.1",
 						SetParameters: &[]oscalTypes.SetParameter{
 							{
 								ParamId: "my-test-param",
@@ -79,18 +131,101 @@ func TestMerge(t *testing.T) {
 					},
 				},
 			},
-			assertFunc: func(t *testing.T, impSettings *ImplementationSettings) {
-				settings := impSettings.AllSettings()
-				require.NotNil(t, settings)
-				require.True(t, settings.ContainsRule("my-test-rule"))
-				applicationControls, err := impSettings.ApplicableControls("my-test-rule")
-				require.NoError(t, err)
-				require.Len(t, applicationControls, 1)
-				require.Equal(t, applicationControls[0], "ex-1")
-				impRequirementSettings, err := impSettings.ByControlID("ex-1")
-				require.NoError(t, err)
-				require.Contains(t, impRequirementSettings.selectedParameters, "my-test-param")
-				require.True(t, impRequirementSettings.ContainsRule("my-test-rule"))
+			wantSettings: ImplementationSettings{
+				settings: Settings{
+					mappedRules: set.Set[string]{
+						"etcd_cert_file": struct{}{},
+						"etcd_key_file":  struct{}{},
+						"my-test-rule":   struct{}{},
+					},
+					selectedParameters: map[string]string{},
+				},
+				implementedReqSettings: map[string]Settings{
+					"CIS-2.1": {
+						mappedRules: set.Set[string]{
+							"etcd_cert_file": struct{}{},
+							"etcd_key_file":  struct{}{},
+							"my-test-rule":   struct{}{},
+						},
+						selectedParameters: map[string]string{
+							"my-test-param": "test-value",
+						},
+					},
+				},
+				controlsByRules: map[string]set.Set[string]{
+					"etcd_cert_file": {
+						"CIS-2.1": struct{}{},
+					},
+					"etcd_key_file": {
+						"CIS-2.1": struct{}{},
+					},
+					"my-test-rule": {
+						"CIS-2.1": struct{}{},
+					},
+				},
+				controlsById: map[string]oscalTypes.AssessedControlsSelectControlById{
+					"CIS-2.1": {
+						ControlId: "CIS-2.1",
+					},
+				},
+			},
+		},
+		{
+			name: "Valid/ExistingRule",
+			inputImplementation: oscalTypes.ControlImplementationSet{
+				ImplementedRequirements: []oscalTypes.ImplementedRequirementControlImplementation{
+					{
+						ControlId: "ex-1",
+						Props: &[]oscalTypes.Property{
+							{
+								Name:  extensions.RuleIdProp,
+								Value: "etcd_cert_file",
+								Ns:    extensions.TrestleNameSpace,
+							},
+						},
+					},
+				},
+			},
+			wantSettings: ImplementationSettings{
+				settings: Settings{
+					mappedRules: set.Set[string]{
+						"etcd_cert_file": struct{}{},
+						"etcd_key_file":  struct{}{},
+					},
+					selectedParameters: map[string]string{},
+				},
+				implementedReqSettings: map[string]Settings{
+					"CIS-2.1": {
+						mappedRules: set.Set[string]{
+							"etcd_cert_file": struct{}{},
+							"etcd_key_file":  struct{}{},
+						},
+						selectedParameters: map[string]string{},
+					},
+					"ex-1": {
+						mappedRules: set.Set[string]{
+							"etcd_cert_file": struct{}{},
+						},
+						selectedParameters: map[string]string{},
+					},
+				},
+				controlsByRules: map[string]set.Set[string]{
+					"etcd_cert_file": {
+						"CIS-2.1": struct{}{},
+						"ex-1":    struct{}{},
+					},
+					"etcd_key_file": {
+						"CIS-2.1": struct{}{},
+					},
+				},
+				controlsById: map[string]oscalTypes.AssessedControlsSelectControlById{
+					"CIS-2.1": {
+						ControlId: "CIS-2.1",
+					},
+					"ex-1": {
+						ControlId: "ex-1",
+					},
+				},
 			},
 		},
 	}
@@ -99,32 +234,24 @@ func TestMerge(t *testing.T) {
 		t.Run(c.name, func(t *testing.T) {
 			testSettings := prepSettings(t)
 			testSettings.merge(c.inputImplementation)
-			c.assertFunc(t, testSettings)
+			require.Equal(t, c.wantSettings, *testSettings)
 		})
 	}
 }
 
 func TestImplementationSettings_Controls(t *testing.T) {
 	testSettings := prepSettings(t)
-	expectedControlIds := []string{"CIS-2.1"}
+	expectedControlIds := []oscalTypes.AssessedControlsSelectControlById{
+		{
+			ControlId: "CIS-2.1",
+		},
+	}
 	gotControlsIds := testSettings.AllControls()
 	require.Equal(t, expectedControlIds, gotControlsIds)
 
 	gotControlIds, err := testSettings.ApplicableControls("etcd_cert_file")
 	require.NoError(t, err)
 	require.Equal(t, expectedControlIds, gotControlIds)
-
-	gotSettings, err := testSettings.ByControlID("CIS-2.1")
-	require.NoError(t, err)
-	expectedSettings := Settings{
-		mappedRules: set.Set[string]{
-			"etcd_cert_file": struct{}{},
-			"etcd_key_file":  struct{}{},
-		},
-		selectedParameters: map[string]string{},
-	}
-
-	require.Equal(t, expectedSettings, gotSettings)
 }
 
 func prepSettings(t *testing.T) *ImplementationSettings {

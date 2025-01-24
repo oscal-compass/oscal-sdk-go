@@ -25,9 +25,8 @@ const (
 )
 
 type generateOpts struct {
-	title           string
-	importSSP       string
-	localComponents []string
+	title     string
+	importSSP string
 }
 
 func (g *generateOpts) defaults() {
@@ -55,18 +54,10 @@ func WithImport(importSSP string) GenerateOption {
 	}
 }
 
-// WithLocalComponents is a GenerateOptions that determine which components
-// the `comps` argument in GenerateAssessmentPlan will be written to Components under
-// LocalDefinitions. This would denote that these component are not defined in the SSP
-// if the `WithImport` options is also used.
-func WithLocalComponents(localComponents []string) GenerateOption {
-	return func(opts *generateOpts) {
-		opts.localComponents = localComponents
-	}
-}
-
 // GenerateAssessmentPlan generates an AssessmentPlan for a set of Components and ImplementationSettings. The chosen inputs allow an Assessment Plan to be generated from
 // a set of OSCAL ComponentDefinitions or a SystemSecurityPlan.
+//
+// If the `WithImport` is not set, all input components are set as Components in the Local Definitions.
 func GenerateAssessmentPlan(ctx context.Context, comps []components.Component, implementationSettings settings.ImplementationSettings, opts ...GenerateOption) (*oscalTypes.AssessmentPlan, error) {
 	options := generateOpts{}
 	options.defaults()
@@ -211,14 +202,7 @@ func ReviewedControls(ruleId string, implementationSettings settings.Implementat
 	return createReviewedControls(applicableControls), nil
 }
 
-func createReviewedControls(applicableControls []string) oscalTypes.ReviewedControls {
-	var selectedControls []oscalTypes.AssessedControlsSelectControlById
-	for _, control := range applicableControls {
-		selector := oscalTypes.AssessedControlsSelectControlById{
-			ControlId: control,
-		}
-		selectedControls = append(selectedControls, selector)
-	}
+func createReviewedControls(selectedControls []oscalTypes.AssessedControlsSelectControlById) oscalTypes.ReviewedControls {
 	assessedControls := oscalTypes.AssessedControls{
 		IncludeControls: &selectedControls,
 	}

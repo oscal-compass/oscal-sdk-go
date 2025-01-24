@@ -109,6 +109,11 @@ func TestFramework(t *testing.T) {
 				"CIS-2.1": struct{}{},
 			},
 		},
+		controlsById: map[string]oscalTypes.AssessedControlsSelectControlById{
+			"CIS-2.1": {
+				ControlId: "CIS-2.1",
+			},
+		},
 	}
 
 	require.Equal(t, expectedSettings, implementationsMap)
