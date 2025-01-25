@@ -114,3 +114,98 @@ func TestSettingsFromImplementedRequirements(t *testing.T) {
 		})
 	}
 }
+
+func TestNewAssessmentActivitiesSettings(t *testing.T) {
+	tests := []struct {
+		name            string
+		inputActivities []oscalTypes.Activity
+		wantSettings    Settings
+	}{
+		{
+			name: "Valid/MappedRulesFound",
+			inputActivities: []oscalTypes.Activity{
+				{
+					Title: "rule-1",
+					Props: &[]oscalTypes.Property{
+						{
+							Name:  "method",
+							Value: "TEST",
+						},
+					},
+				},
+				{
+					Title: "rule-2",
+					Props: &[]oscalTypes.Property{
+						{
+							Name:  "method",
+							Value: "TEST",
+						},
+					},
+				},
+			},
+			wantSettings: Settings{
+				mappedRules: set.Set[string]{
+					"rule-1": struct{}{},
+					"rule-2": struct{}{},
+				},
+				selectedParameters: map[string]string{},
+			},
+		},
+		{
+			name: "Valid/ParametersFound",
+			inputActivities: []oscalTypes.Activity{
+				{
+					Title: "rule-1",
+					Props: &[]oscalTypes.Property{
+						{
+							Name:  "param-1",
+							Ns:    extensions.TrestleNameSpace,
+							Value: "value",
+							Class: extensions.TestParameterClass,
+						},
+						{
+							Name:  "method",
+							Value: "TEST",
+						},
+					},
+				},
+				{
+					Title: "rule-2",
+					Props: &[]oscalTypes.Property{
+						{
+							Name:  "method",
+							Value: "TEST",
+						},
+					},
+				},
+			},
+			wantSettings: Settings{
+				mappedRules: set.Set[string]{
+					"rule-1": struct{}{},
+					"rule-2": struct{}{},
+				},
+				selectedParameters: map[string]string{
+					"param-1": "value",
+				},
+			},
+		},
+		{
+			name: "Valid/NoSettingsFound",
+			inputActivities: []oscalTypes.Activity{
+				{Title: "Not a Rule"},
+				{Title: "Also not a Rule"},
+			},
+			wantSettings: Settings{
+				mappedRules:        map[string]struct{}{},
+				selectedParameters: map[string]string{},
+			},
+		},
+	}
+
+	for _, c := range tests {
+		t.Run(c.name, func(t *testing.T) {
+			gotSettings := NewAssessmentActivitiesSettings(c.inputActivities)
+			require.Equal(t, c.wantSettings, gotSettings)
+		})
+	}
+}
