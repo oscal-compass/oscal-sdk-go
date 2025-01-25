@@ -50,6 +50,9 @@ func TestGenerateAssessmentPlan(t *testing.T) {
 				// Validate default string
 				require.Equal(t, plan.Metadata.Title, generators.SampleRequiredString)
 				require.Equal(t, plan.ImportSsp.Href, generators.SampleRequiredString)
+
+				require.NotNil(t, plan.LocalDefinitions.Components)
+				require.Len(t, *plan.LocalDefinitions.Components, 1)
 			},
 			expError: "",
 		},
@@ -61,6 +64,7 @@ func TestGenerateAssessmentPlan(t *testing.T) {
 			assertFunc: func(t *testing.T, plan *oscalTypes.AssessmentPlan) {
 				require.Equal(t, plan.Metadata.Title, "mytitle")
 				require.Equal(t, plan.ImportSsp.Href, "myimport")
+				require.Nil(t, plan.LocalDefinitions.Components)
 			},
 			expError: "",
 		},

@@ -70,18 +70,16 @@ func GenerateAssessmentPlan(ctx context.Context, comps []components.Component, i
 		return nil, fmt.Errorf("failed processing components for assessment plan %q: %w", options.title, err)
 	}
 
-	ruleBasedTask := oscalTypes.Task{
-		UUID:                 uuid.NewUUID(),
-		Title:                "Automated Assessment",
-		Type:                 defaultTaskType,
-		Description:          "Evaluation of defined rules for applicable comps.",
-		Subjects:             &[]oscalTypes.AssessmentSubject{},
-		AssociatedActivities: &[]oscalTypes.AssociatedActivity{},
-	}
+	var (
+		allActivities    []oscalTypes.Activity
+		subjectSelectors []oscalTypes.SelectSubjectById
+		localComponents  []components.Component
+		ruleBasedTask    = newTask()
+	)
 
-	var allActivities []oscalTypes.Activity
-	var subjectSelectors []oscalTypes.SelectSubjectById
 	for _, comp := range comps {
+
+		// process components
 		if comp.Type() == components.Validation {
 			continue
 		}
@@ -90,6 +88,11 @@ func GenerateAssessmentPlan(ctx context.Context, comps []components.Component, i
 		if err != nil {
 			return nil, fmt.Errorf("error generating assessment activities for component %s: %w", compTitle, err)
 		}
+		if len(componentActivities) == 0 {
+			continue
+		}
+
+		// create assessment plan objects
 		allActivities = append(allActivities, componentActivities...)
 		selector := oscalTypes.SelectSubjectById{
 			Type:        defaultSubjectType,
@@ -103,12 +106,15 @@ func GenerateAssessmentPlan(ctx context.Context, comps []components.Component, i
 
 		associatedActivities := AssessmentActivities(assessmentSubject, componentActivities)
 		*ruleBasedTask.AssociatedActivities = append(*ruleBasedTask.AssociatedActivities, associatedActivities...)
+
+		// Here we assume the Components are from a corresponding
+		// SSP making them locally defined.
+		if options.importSSP == generators.SampleRequiredString {
+			localComponents = append(localComponents, comp)
+		}
 	}
 
 	assessmentAssets := AssessmentAssets(comps)
-	localDefinitions := oscalTypes.LocalDefinitions{
-		Activities: &allActivities,
-	}
 	*ruleBasedTask.Subjects = append(*ruleBasedTask.Subjects, oscalTypes.AssessmentSubject{IncludeSubjects: &subjectSelectors})
 
 	metadata := generators.NewSampleMetadata()
@@ -126,7 +132,7 @@ func GenerateAssessmentPlan(ctx context.Context, comps []components.Component, i
 				Type:            defaultSubjectType,
 			},
 		},
-		LocalDefinitions: &localDefinitions,
+		LocalDefinitions: createLocalDefinitions(allActivities, localComponents),
 		ReviewedControls: AllReviewedControls(implementationSettings),
 		AssessmentAssets: &assessmentAssets,
 		Tasks:            &[]oscalTypes.Task{ruleBasedTask},
@@ -135,7 +141,25 @@ func GenerateAssessmentPlan(ctx context.Context, comps []components.Component, i
 	return assessmentPlan, nil
 }
 
+// newTask creates a new OSCAL Task with default values.
+func newTask() oscalTypes.Task {
+	return oscalTypes.Task{
+		UUID:                 uuid.NewUUID(),
+		Title:                "Automated Assessment",
+		Type:                 defaultTaskType,
+		Description:          "Evaluation of defined rules for applicable comps.",
+		Subjects:             &[]oscalTypes.AssessmentSubject{},
+		AssociatedActivities: &[]oscalTypes.AssociatedActivity{},
+	}
+}
+
 // ActivitiesForComponent returns a list of activities with for a given component Title.
+//
+// The mapping between a RuleSet and Activity is as follows:
+// Rule -> Activity
+// ID -> Title
+// Parameter -> Activity Property
+// Check -> Activity Step
 func ActivitiesForComponent(ctx context.Context, targetComponentID string, store rules.Store, implementationSettings settings.ImplementationSettings) ([]oscalTypes.Activity, error) {
 	methodProp := oscalTypes.Property{
 		Name:  "method",
@@ -178,13 +202,33 @@ func ActivitiesForComponent(ctx context.Context, targetComponentID string, store
 				Name:  rule.Rule.Parameter.ID,
 				Value: rule.Rule.Parameter.Value,
 				Ns:    extensions.TrestleNameSpace,
-				Class: "test-parameter",
+				Class: extensions.TestParameterClass,
 			}
 			*activity.Props = append(*activity.Props, parameterProp)
 		}
 		activities = append(activities, activity)
 	}
 	return activities, nil
+}
+
+// createLocationDefinitions for an AssessmentPlan from given Activities and components marked as local.
+func createLocalDefinitions(activities []oscalTypes.Activity, localComps []components.Component) *oscalTypes.LocalDefinitions {
+	localDefinitions := &oscalTypes.LocalDefinitions{
+		Activities: &activities,
+	}
+	if len(localComps) == 0 {
+		return localDefinitions
+	}
+
+	localDefinitions.Components = &[]oscalTypes.SystemComponent{}
+	for _, comp := range localComps {
+		sysComp, ok := comp.AsSystemComponent()
+		if ok {
+			*localDefinitions.Components = append(*localDefinitions.Components, sysComp)
+		}
+	}
+
+	return localDefinitions
 }
 
 // AllReviewedControls returns ReviewControls with all the applicable controls ids in the implementation.
