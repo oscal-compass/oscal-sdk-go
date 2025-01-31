@@ -1,5 +1,5 @@
 /*
- Copyright 2024 The OSCAL Compass Authors
+ Copyright 2025 The OSCAL Compass Authors
  SPDX-License-Identifier: Apache-2.0
 */
 
