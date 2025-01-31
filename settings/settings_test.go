@@ -21,7 +21,7 @@ import (
 func TestApplyToComponents(t *testing.T) {
 	tests := []struct {
 		name               string
-		settings           RequirementSettings
+		settings           Settings
 		componentID        string
 		expError           string
 		wantRules          []extensions.RuleSet
@@ -30,7 +30,7 @@ func TestApplyToComponents(t *testing.T) {
 		{
 			name:        "Valid/WithMappedRules",
 			componentID: "testComponent1",
-			settings: RequirementSettings{
+			settings: Settings{
 				mappedRules: set.Set[string]{
 					"testRule1": struct{}{},
 					"testRule2": struct{}{},
@@ -42,7 +42,7 @@ func TestApplyToComponents(t *testing.T) {
 		{
 			name:        "Valid/WithParameterOverrides",
 			componentID: "testComponent2",
-			settings: RequirementSettings{
+			settings: Settings{
 				selectedParameters: map[string]string{
 					"testParam1": "updatedValue",
 				},
@@ -79,7 +79,7 @@ func TestApplyToComponents(t *testing.T) {
 		{
 			name:        "Invalid/InvalidSettings",
 			componentID: "testComponent1",
-			settings: RequirementSettings{
+			settings: Settings{
 				mappedRules: set.Set[string]{
 					"doesnotexists": struct{}{},
 				},
@@ -93,7 +93,7 @@ func TestApplyToComponents(t *testing.T) {
 			testCtx := context.Background()
 			store := newFakeStore()
 
-			gotRules, err := ApplyToComponent(testCtx, c.componentID, store, &c.settings)
+			gotRules, err := ApplyToComponent(testCtx, c.componentID, store, c.settings)
 			sort.SliceStable(gotRules, func(i, j int) bool {
 				return gotRules[i].Rule.ID < gotRules[j].Rule.ID
 			})

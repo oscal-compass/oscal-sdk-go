@@ -90,14 +90,47 @@ func TestGetTrestleProp(t *testing.T) {
 
 func TestFindAllProps(t *testing.T) {
 	tests := []struct {
-		name       string
-		inputName  string
-		inputProps []oscalTypes.Property
-		wantProps  []oscalTypes.Property
+		name         string
+		inputOptions []FindOption
+		inputProps   []oscalTypes.Property
+		wantProps    []oscalTypes.Property
 	}{
 		{
-			name:      "Valid/PropsFound",
-			inputName: "testProp1",
+			name: "Valid/Defaults",
+			inputProps: []oscalTypes.Property{
+				{
+					Name:  "testProp1",
+					Value: "testValue1",
+					Ns:    TrestleNameSpace,
+				},
+				{
+					Name:  "testProp2",
+					Value: "testValue2",
+					Ns:    TrestleNameSpace,
+				},
+				{
+					Name:  "testProp3",
+					Value: "testValue3",
+				},
+			},
+			wantProps: []oscalTypes.Property{
+				{
+					Name:  "testProp1",
+					Value: "testValue1",
+					Ns:    TrestleNameSpace,
+				},
+				{
+					Name:  "testProp2",
+					Value: "testValue2",
+					Ns:    TrestleNameSpace,
+				},
+			},
+		},
+		{
+			name: "Valid/PropsFoundByName",
+			inputOptions: []FindOption{
+				WithName("testProp1"),
+			},
 			inputProps: []oscalTypes.Property{
 				{
 					Name:  "testProp1",
@@ -134,8 +167,10 @@ func TestFindAllProps(t *testing.T) {
 			},
 		},
 		{
-			name:      "Valid/NoPropsFound",
-			inputName: "testProp3",
+			name: "Valid/NoPropsFound",
+			inputOptions: []FindOption{
+				WithName("testProp3"),
+			},
 			inputProps: []oscalTypes.Property{
 				{
 					Name:  "testProp1",
@@ -159,7 +194,7 @@ func TestFindAllProps(t *testing.T) {
 
 	for _, c := range tests {
 		t.Run(c.name, func(t *testing.T) {
-			foundProps := FindAllProps(c.inputName, c.inputProps)
+			foundProps := FindAllProps(c.inputProps, c.inputOptions...)
 			require.Equal(t, c.wantProps, foundProps)
 		})
 	}
