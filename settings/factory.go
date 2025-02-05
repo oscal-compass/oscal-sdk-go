@@ -40,7 +40,8 @@ func NewImplementationSettings(controlImplementation oscalTypes.ControlImplement
 	return implementation
 }
 
-// NewAssessmentActivitiesSettings returns a new Setting populate based on data from OSCAL Activities
+// NewAssessmentActivitiesSettings returns a new Setting populated based on data from OSCAL Assessment Plan
+// Activities.
 //
 // The mapping between a RuleSet and Activity is as follows:
 // Activity -> Rule
@@ -70,9 +71,7 @@ func NewAssessmentActivitiesSettings(assessmentActivities []oscalTypes.Activity)
 	}
 }
 
-//	newRequirementForImplementation adds a new Setting to an existing ImplementationSettings and updates all related
-//
-// fields.
+// newRequirementForImplementation adds a new Setting to an existing ImplementationSettings and updates all related fields.
 func newRequirementForImplementation(implementedReq oscalTypes.ImplementedRequirementControlImplementation, implementation *ImplementationSettings) {
 	implementedControl := oscalTypes.AssessedControlsSelectControlById{
 		ControlId: implementedReq.ControlId,

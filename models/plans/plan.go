@@ -115,7 +115,11 @@ func GenerateAssessmentPlan(ctx context.Context, comps []components.Component, i
 	}
 
 	assessmentAssets := AssessmentAssets(comps)
-	*ruleBasedTask.Subjects = append(*ruleBasedTask.Subjects, oscalTypes.AssessmentSubject{IncludeSubjects: &subjectSelectors})
+	taskAssessmentSubject := oscalTypes.AssessmentSubject{
+		IncludeSubjects: &subjectSelectors,
+		Type:            defaultSubjectType,
+	}
+	*ruleBasedTask.Subjects = append(*ruleBasedTask.Subjects, taskAssessmentSubject)
 
 	metadata := generators.NewSampleMetadata()
 	metadata.Title = options.title
@@ -147,7 +151,7 @@ func newTask() oscalTypes.Task {
 		UUID:                 uuid.NewUUID(),
 		Title:                "Automated Assessment",
 		Type:                 defaultTaskType,
-		Description:          "Evaluation of defined rules for applicable comps.",
+		Description:          "Evaluation of defined rules for components.",
 		Subjects:             &[]oscalTypes.AssessmentSubject{},
 		AssociatedActivities: &[]oscalTypes.AssociatedActivity{},
 	}
