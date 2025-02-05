@@ -32,14 +32,65 @@ const (
 	ParameterDefaultProp = "Parameter_Value_Default"
 	// FrameworkProp represents the property name for the control source short name.
 	FrameworkProp = "Framework_Short_Name"
+	// TestParameterClass represents the property class for all test parameters
+	// in OSCAL Activity types in Assessment Plans.
+	TestParameterClass = "test-parameter"
 )
 
-// FindAllProps returns all properties with the given name. If no properties match, nil is returned.
-// This function also implicitly checks that the property is a trestle-defined property in the namespace.
-func FindAllProps(name string, props []oscalTypes.Property) []oscalTypes.Property {
+type findOptions struct {
+	class     string
+	name      string
+	namespace string
+}
+
+// FindOption define an options for searching oscal Property
+// sets.
+type FindOption func(opts *findOptions)
+
+// WithName defines a FindOptions to search for properties
+// with a given name.
+func WithName(name string) FindOption {
+	return func(opts *findOptions) {
+		opts.name = name
+	}
+}
+
+// WithClass defines a FindOptions to search for properties
+// of a given class.
+func WithClass(class string) FindOption {
+	return func(opts *findOptions) {
+		opts.class = class
+	}
+}
+
+// WithNamespace defines a FindOptions to search for properties
+// in a given namespace. The default is the TrestleNameSpace.
+func WithNamespace(namespace string) FindOption {
+	return func(opts *findOptions) {
+		opts.namespace = namespace
+	}
+}
+
+// FindAllProps returns all properties with the given options. By default, all properties with a Trestle
+// namespace will be returned.
+func FindAllProps(props []oscalTypes.Property, opts ...FindOption) []oscalTypes.Property {
+	options := findOptions{
+		namespace: TrestleNameSpace,
+	}
+	for _, opt := range opts {
+		opt(&options)
+	}
+
 	var matchingProps []oscalTypes.Property
 	for _, prop := range props {
-		if prop.Name == name && strings.Contains(prop.Ns, TrestleNameSpace) {
+
+		if strings.Contains(prop.Ns, options.namespace) {
+			if options.name != "" && prop.Name != options.name {
+				continue
+			}
+			if options.class != "" && prop.Class != options.class {
+				continue
+			}
 			matchingProps = append(matchingProps, prop)
 		}
 	}

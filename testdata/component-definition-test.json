@@ -11,8 +11,8 @@
       {
         "uuid": "c8106bc8-5174-4e86-91a4-52f2fe0ed027",
         "type": "service",
-        "title": "Kubernetes",
-        "description": "Kubernetes",
+        "title": "TestKubernetes",
+        "description": "TestKubernetes",
         "props": [
           {
             "name": "Rule_Id",
@@ -56,6 +56,14 @@
             "uuid": "f79d6290-8efa-4ea7-b931-27b8435cf707",
             "source": "profiles/cis/profile.json",
             "description": "CIS Profile",
+            "set-parameters": [
+              {
+                "param-id": "file_name",
+                "values": [
+                  "file_name_override"
+                ]
+              }
+            ],
             "implemented-requirements": [
               {
                 "uuid": "a1b5b713-52c7-46fb-ab57-ebac7f576b23",
