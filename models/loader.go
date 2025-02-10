@@ -3,21 +3,28 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package generators
+package models
 
 import (
 	"encoding/json"
 	"io"
 
-	oscal112 "github.com/defenseunicorns/go-oscal/src/types/oscal-1-1-2"
+	oscalTypes "github.com/defenseunicorns/go-oscal/src/types/oscal-1-1-2"
+
+	"github.com/oscal-compass/oscal-sdk-go/validation"
 )
 
 // NewCatalog creates a new OSCAL-based control catalog using types from `go-oscal`.
-func NewCatalog(reader io.Reader) (catalog *oscal112.Catalog, err error) {
-	var oscalModels oscal112.OscalModels
+func NewCatalog(reader io.Reader, validator validation.Validator) (catalog *oscalTypes.Catalog, err error) {
+	var oscalModels oscalTypes.OscalModels
 	dec := json.NewDecoder(reader)
 	dec.DisallowUnknownFields()
 	if err = dec.Decode(&oscalModels); err != nil {
+		return nil, err
+	}
+
+	err = validator.Validate(oscalModels)
+	if err != nil {
 		return nil, err
 	}
 
@@ -25,11 +32,16 @@ func NewCatalog(reader io.Reader) (catalog *oscal112.Catalog, err error) {
 }
 
 // NewProfile creates a new OSCAL-based profile using types from `go-oscal`.
-func NewProfile(reader io.Reader) (profile *oscal112.Profile, err error) {
-	var oscalModels oscal112.OscalModels
+func NewProfile(reader io.Reader, validator validation.Validator) (profile *oscalTypes.Profile, err error) {
+	var oscalModels oscalTypes.OscalModels
 	dec := json.NewDecoder(reader)
 	dec.DisallowUnknownFields()
 	if err = dec.Decode(&oscalModels); err != nil {
+		return nil, err
+	}
+
+	err = validator.Validate(oscalModels)
+	if err != nil {
 		return nil, err
 	}
 
@@ -37,11 +49,16 @@ func NewProfile(reader io.Reader) (profile *oscal112.Profile, err error) {
 }
 
 // NewComponentDefinition creates a new OSCAL-based component definition using types from `go-oscal`.
-func NewComponentDefinition(reader io.Reader) (componentDefinition *oscal112.ComponentDefinition, err error) {
-	var oscalModels oscal112.OscalModels
+func NewComponentDefinition(reader io.Reader, validator validation.Validator) (componentDefinition *oscalTypes.ComponentDefinition, err error) {
+	var oscalModels oscalTypes.OscalModels
 	dec := json.NewDecoder(reader)
 	dec.DisallowUnknownFields()
 	if err = dec.Decode(&oscalModels); err != nil {
+		return nil, err
+	}
+
+	err = validator.Validate(oscalModels)
+	if err != nil {
 		return nil, err
 	}
 
@@ -49,11 +66,16 @@ func NewComponentDefinition(reader io.Reader) (componentDefinition *oscal112.Com
 }
 
 // NewSystemSecurityPlan creates a new OSCAL-based system security plan using types from `go-oscal`.
-func NewSystemSecurityPlan(reader io.Reader) (systemSecurityPlan *oscal112.SystemSecurityPlan, err error) {
-	var oscalModels oscal112.OscalModels
+func NewSystemSecurityPlan(reader io.Reader, validator validation.Validator) (systemSecurityPlan *oscalTypes.SystemSecurityPlan, err error) {
+	var oscalModels oscalTypes.OscalModels
 	dec := json.NewDecoder(reader)
 	dec.DisallowUnknownFields()
 	if err = dec.Decode(&oscalModels); err != nil {
+		return nil, err
+	}
+
+	err = validator.Validate(oscalModels)
+	if err != nil {
 		return nil, err
 	}
 
@@ -61,11 +83,16 @@ func NewSystemSecurityPlan(reader io.Reader) (systemSecurityPlan *oscal112.Syste
 }
 
 // NewAssessmentPlan creates a new OSCAL-based assessment plan using types from `go-oscal`.
-func NewAssessmentPlan(reader io.Reader) (assessmentPlan *oscal112.AssessmentPlan, err error) {
-	var oscalModels oscal112.OscalModels
+func NewAssessmentPlan(reader io.Reader, validator validation.Validator) (assessmentPlan *oscalTypes.AssessmentPlan, err error) {
+	var oscalModels oscalTypes.OscalModels
 	dec := json.NewDecoder(reader)
 	dec.DisallowUnknownFields()
 	if err = dec.Decode(&oscalModels); err != nil {
+		return nil, err
+	}
+
+	err = validator.Validate(oscalModels)
+	if err != nil {
 		return nil, err
 	}
 
@@ -73,11 +100,16 @@ func NewAssessmentPlan(reader io.Reader) (assessmentPlan *oscal112.AssessmentPla
 }
 
 // NewAssessmentResults creates a new OSCAL-based assessment results set using types from `go-oscal`.
-func NewAssessmentResults(reader io.Reader) (assessmentResult *oscal112.AssessmentResults, err error) {
-	var oscalModels oscal112.OscalModels
+func NewAssessmentResults(reader io.Reader, validator validation.Validator) (assessmentResult *oscalTypes.AssessmentResults, err error) {
+	var oscalModels oscalTypes.OscalModels
 	dec := json.NewDecoder(reader)
 	dec.DisallowUnknownFields()
 	if err = dec.Decode(&oscalModels); err != nil {
+		return nil, err
+	}
+
+	err = validator.Validate(oscalModels)
+	if err != nil {
 		return nil, err
 	}
 
@@ -85,11 +117,16 @@ func NewAssessmentResults(reader io.Reader) (assessmentResult *oscal112.Assessme
 }
 
 // NewPOAM creates a new OSCAL-based plan of action and milestones using types from `go-oscal`.
-func NewPOAM(reader io.Reader) (pOAM *oscal112.PlanOfActionAndMilestones, err error) {
-	var oscalModels oscal112.OscalModels
+func NewPOAM(reader io.Reader, validator validation.Validator) (pOAM *oscalTypes.PlanOfActionAndMilestones, err error) {
+	var oscalModels oscalTypes.OscalModels
 	dec := json.NewDecoder(reader)
 	dec.DisallowUnknownFields()
 	if err = dec.Decode(&oscalModels); err != nil {
+		return nil, err
+	}
+
+	err = validator.Validate(oscalModels)
+	if err != nil {
 		return nil, err
 	}
 
