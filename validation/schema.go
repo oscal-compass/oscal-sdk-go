@@ -12,6 +12,9 @@ import (
 
 var _ Validator = (*SchemaValidator)(nil)
 
+// OSCALVersion is the default version of OSCAL supported.
+const OSCALVersion = "1.1.2"
+
 /*
 SchemaValidator implementation a validation.Validator and
 validates the OSCAL documents with OSCAL JSON schema using `go-oscal`.
@@ -21,8 +24,14 @@ type SchemaValidator struct {
 	oscalVersion string
 }
 
-// NewSchemaValidator returns a new versioned SchemaValidator.
-func NewSchemaValidator(version string) *SchemaValidator {
+// NewSchemaValidator returns a new SchemaValidator with a
+// default OSCAL Version.
+func NewSchemaValidator() *SchemaValidator {
+	return NewSchemaValidatorWithVersion(OSCALVersion)
+}
+
+// NewSchemaValidatorWithVersion returns a new versioned SchemaValidator.
+func NewSchemaValidatorWithVersion(version string) *SchemaValidator {
 	return &SchemaValidator{
 		id:           "schema",
 		oscalVersion: version,

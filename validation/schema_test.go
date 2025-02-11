@@ -53,7 +53,9 @@ func TestNewSchemaValidator(t *testing.T) {
 
 	for _, c := range tests {
 		t.Run(c.name, func(t *testing.T) {
-			validator := NewSchemaValidator("1.1.2")
+			validator := NewSchemaValidator()
+			require.Equal(t, OSCALVersion, validator.oscalVersion)
+			require.Equal(t, "schema", validator.id)
 			err := validator.Validate(c.modelData)
 			if c.wantErr != "" {
 				require.ErrorContains(t, err, c.wantErr)
