@@ -14,8 +14,9 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/oscal-compass/oscal-sdk-go/extensions"
-	"github.com/oscal-compass/oscal-sdk-go/generators"
 	"github.com/oscal-compass/oscal-sdk-go/internal/set"
+	"github.com/oscal-compass/oscal-sdk-go/models"
+	"github.com/oscal-compass/oscal-sdk-go/validation"
 )
 
 func TestGetFrameworkShortName(t *testing.T) {
@@ -69,7 +70,7 @@ func TestFramework(t *testing.T) {
 	testDataPath := filepath.Join("../testdata", "component-definition-test-reqs.json")
 	file, err := os.Open(testDataPath)
 	require.NoError(t, err)
-	definition, err := generators.NewComponentDefinition(file)
+	definition, err := models.NewComponentDefinition(file, validation.NoopValidator{})
 	require.NoError(t, err)
 
 	require.NotNil(t, definition.Components)
