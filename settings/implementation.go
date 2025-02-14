@@ -11,6 +11,7 @@ import (
 	oscalTypes "github.com/defenseunicorns/go-oscal/src/types/oscal-1-1-3"
 
 	"github.com/oscal-compass/oscal-sdk-go/internal/set"
+	"github.com/oscal-compass/oscal-sdk-go/models/components"
 )
 
 // ImplementationSettings defines settings for RuleSets defined at the control
@@ -79,18 +80,16 @@ func (i *ImplementationSettings) ApplicableControls(ruleId string) ([]oscalTypes
 
 // merge another ImplementationSettings into the ImplementationSettings. Existing settings at the
 // requirements level are also merged.
-func (i *ImplementationSettings) merge(inputImplementation oscalTypes.ControlImplementationSet) {
-	if inputImplementation.SetParameters != nil {
-		setParameters(*inputImplementation.SetParameters, i.settings.selectedParameters)
-	}
+func (i *ImplementationSettings) merge(inputImplementation components.Implementation) {
+	setParameters(inputImplementation.SetParameters(), i.settings.selectedParameters)
 
-	for _, implementedReq := range inputImplementation.ImplementedRequirements {
-		requirement, ok := i.implementedReqSettings[implementedReq.ControlId]
+	for _, requirement := range inputImplementation.Requirements() {
+		reqSettings, ok := i.implementedReqSettings[requirement.ControlID()]
 		if !ok {
-			newRequirementForImplementation(implementedReq, i)
+			newRequirementForImplementation(requirement, i)
 		} else {
 
-			inputRequirement := settingsFromImplementedRequirement(implementedReq)
+			inputRequirement := settingsFromImplementedRequirement(requirement)
 			if len(inputRequirement.mappedRules) == 0 {
 				continue
 			}
@@ -100,15 +99,15 @@ func (i *ImplementationSettings) merge(inputImplementation oscalTypes.ControlImp
 				if !ok {
 					controlSet = set.New[string]()
 				}
-				controlSet.Add(implementedReq.ControlId)
+				controlSet.Add(requirement.ControlID())
 				i.controlsByRules[mappedRule] = controlSet
 				i.settings.mappedRules.Add(mappedRule)
-				requirement.mappedRules.Add(mappedRule)
+				reqSettings.mappedRules.Add(mappedRule)
 			}
 			for name, value := range inputRequirement.selectedParameters {
-				requirement.selectedParameters[name] = value
+				reqSettings.selectedParameters[name] = value
 			}
-			i.implementedReqSettings[implementedReq.ControlId] = requirement
+			i.implementedReqSettings[requirement.ControlID()] = reqSettings
 		}
 	}
 }

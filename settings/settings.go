@@ -7,12 +7,17 @@ package settings
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/oscal-compass/oscal-sdk-go/extensions"
 	"github.com/oscal-compass/oscal-sdk-go/internal/set"
 	"github.com/oscal-compass/oscal-sdk-go/rules"
 )
+
+// ErrRulesNotFound defines an error returned when there are not intersecting ruleSet store
+// for a component and in the given Settings.
+var ErrRulesNotFound = errors.New("no rules found with criteria")
 
 // Settings defines settings for RuleSets to tune options based in the
 // target baseline or compliance goals.
@@ -66,7 +71,7 @@ func ApplyToComponent(ctx context.Context, componentId string, store rules.Store
 		resolvedRules = append(resolvedRules, ruleSet)
 	}
 	if len(resolvedRules) == 0 {
-		return []extensions.RuleSet{}, fmt.Errorf("no rules found with criteria for component %s", componentId)
+		return []extensions.RuleSet{}, fmt.Errorf("component %s: %w", componentId, ErrRulesNotFound)
 	}
 	return resolvedRules, nil
 }
