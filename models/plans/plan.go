@@ -13,7 +13,7 @@ import (
 	oscalTypes "github.com/defenseunicorns/go-oscal/src/types/oscal-1-1-2"
 
 	"github.com/oscal-compass/oscal-sdk-go/extensions"
-	"github.com/oscal-compass/oscal-sdk-go/generators"
+	"github.com/oscal-compass/oscal-sdk-go/models"
 	"github.com/oscal-compass/oscal-sdk-go/models/components"
 	"github.com/oscal-compass/oscal-sdk-go/rules"
 	"github.com/oscal-compass/oscal-sdk-go/settings"
@@ -30,8 +30,8 @@ type generateOpts struct {
 }
 
 func (g *generateOpts) defaults() {
-	g.title = generators.SampleRequiredString
-	g.importSSP = generators.SampleRequiredString
+	g.title = models.SampleRequiredString
+	g.importSSP = models.SampleRequiredString
 }
 
 // GenerateOption defines an option to tune the behavior of the
@@ -109,7 +109,7 @@ func GenerateAssessmentPlan(ctx context.Context, comps []components.Component, i
 
 		// Here we assume the Components are from a corresponding
 		// SSP making them locally defined.
-		if options.importSSP == generators.SampleRequiredString {
+		if options.importSSP == models.SampleRequiredString {
 			localComponents = append(localComponents, comp)
 		}
 	}
@@ -121,7 +121,7 @@ func GenerateAssessmentPlan(ctx context.Context, comps []components.Component, i
 	}
 	*ruleBasedTask.Subjects = append(*ruleBasedTask.Subjects, taskAssessmentSubject)
 
-	metadata := generators.NewSampleMetadata()
+	metadata := models.NewSampleMetadata()
 	metadata.Title = options.title
 
 	assessmentPlan := &oscalTypes.AssessmentPlan{
@@ -299,7 +299,7 @@ func AssessmentAssets(comps []components.Component) oscalTypes.AssessmentAssets 
 	// AssessmentPlatforms is a required field under AssessmentAssets
 	assessmentPlatform := oscalTypes.AssessmentPlatform{
 		UUID:           uuid.NewUUID(),
-		Title:          generators.SampleRequiredString,
+		Title:          models.SampleRequiredString,
 		UsesComponents: &usedComponents,
 	}
 	assessmentAssets := oscalTypes.AssessmentAssets{
