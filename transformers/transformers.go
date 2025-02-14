@@ -41,3 +41,25 @@ func ComponentDefinitionsToAssessmentPlan(ctx context.Context, definitions []osc
 	}
 	return plans.GenerateAssessmentPlan(ctx, allComponents, *implementationSettings)
 }
+
+// SSPToAssessmentPlan transforms the data from a System Security Plan at a given import location to a single OSCAL Assessment Plan.
+func SSPToAssessmentPlan(ctx context.Context, ssp oscalTypes.SystemSecurityPlan, sspImportPath string) (*oscalTypes.AssessmentPlan, error) {
+	var allComponents []components.Component
+	for _, sysComp := range ssp.SystemImplementation.Components {
+		componentAdapter := components.NewSystemComponentAdapter(sysComp)
+		// Skip any components that don't have attached rules
+		// For an SSP, this is likely the "This System" component
+		if len(componentAdapter.Props()) == 0 || componentAdapter.Title() == "This System" {
+			continue
+		}
+		allComponents = append(allComponents, componentAdapter)
+	}
+	implementationAdapter := components.NewControlImplementationAdapter(ssp.ControlImplementation)
+	implementationSettings := settings.NewImplementationSettings(implementationAdapter)
+
+	if implementationSettings == nil {
+		return nil, fmt.Errorf("cannot transform ssp for at path %s", sspImportPath)
+	}
+
+	return plans.GenerateAssessmentPlan(ctx, allComponents, *implementationSettings, plans.WithImport(sspImportPath))
+}
