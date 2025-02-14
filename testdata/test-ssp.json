@@ -1,0 +1,246 @@
+{
+  "system-security-plan": {
+    "uuid": "05bc8eb4-4a8a-4b54-8c10-ee3eba2c401f",
+    "metadata": {
+      "title": "Test SSP",
+      "last-modified": "2023-04-27T15:44:08.070614+10:00",
+      "version": "0.1.0",
+      "oscal-version": "1.1.2"
+    },
+    "import-profile": {
+      "href": "profiles/example/profile.json"
+    },
+    "system-characteristics": {
+      "system-ids": [
+        {
+          "id": "REPLACE_ME"
+        }
+      ],
+      "system-name": "REPLACE_ME",
+      "description": "REPLACE_ME",
+      "security-sensitivity-level": "REPLACE_ME",
+      "system-information": {
+        "information-types": [
+          {
+            "title": "REPLACE_ME",
+            "description": "REPLACE_ME",
+            "confidentiality-impact": {
+              "base": "REPLACE_ME"
+            },
+            "integrity-impact": {
+              "base": "REPLACE_ME"
+            },
+            "availability-impact": {
+              "base": "REPLACE_ME"
+            }
+          }
+        ]
+      },
+      "security-impact-level": {
+        "security-objective-confidentiality": "REPLACE_ME",
+        "security-objective-integrity": "REPLACE_ME",
+        "security-objective-availability": "REPLACE_ME"
+      },
+      "status": {
+        "state": "operational"
+      },
+      "authorization-boundary": {
+        "description": "REPLACE_ME"
+      }
+    },
+    "system-implementation": {
+      "users": [
+        {
+          "uuid": "fce50e22-a3c4-4ee6-b397-f4b94e0d5e2d"
+        }
+      ],
+      "components": [
+        {
+          "uuid": "4e19131e-b361-4f0e-8262-02bf4456202e",
+          "type": "service",
+          "title": "Example Service",
+          "description": "An example service for SSP testing",
+          "props": [
+            {
+              "name": "Rule_Id",
+              "ns": "https://oscal-compass.github.io/compliance-trestle/schemas/oscal/cd",
+              "value": "rule-1",
+              "remarks": "rule_set_00"
+            },
+            {
+              "name": "Rule_Description",
+              "ns": "https://oscal-compass.github.io/compliance-trestle/schemas/oscal/cd",
+              "value": "Rule 1 description",
+              "remarks": "rule_set_00"
+            },
+            {
+              "name": "Parameter_Id",
+              "ns": "https://oscal-compass.github.io/compliance-trestle/schemas/oscal/cd",
+              "value": "param-1",
+              "remarks": "rule_set_00"
+            },
+            {
+              "name": "Parameter_Description",
+              "ns": "https://oscal-compass.github.io/compliance-trestle/schemas/oscal/cd",
+              "value": "Param 1 description",
+              "remarks": "rule_set_00"
+            },
+            {
+              "name": "Parameter_Value_Alternatives",
+              "ns": "https://oscal-compass.github.io/compliance-trestle/schemas/oscal/cd",
+              "value": "1, 2, 3",
+              "remarks": "rule_set_00"
+            },
+            {
+              "name": "Rule_Id",
+              "ns": "https://oscal-compass.github.io/compliance-trestle/schemas/oscal/cd",
+              "value": "rule-2",
+              "remarks": "rule_set_01"
+            },
+            {
+              "name": "Rule_Description",
+              "ns": "https://oscal-compass.github.io/compliance-trestle/schemas/oscal/cd",
+              "value": "Rule 2 description",
+              "remarks": "rule_set_01"
+            }
+          ],
+          "status": {
+            "state": "REPLACE_ME"
+          }
+        },
+        {
+          "uuid": "ceb0b4b0-8b3c-4e71-8874-57d42c0f36e3",
+          "type": "this-system",
+          "title": "This System",
+          "description": "",
+          "status": {
+            "state": "REPLACE_ME"
+          }
+        },
+        {
+          "uuid": "701c70f1-482b-42b0-a419-9870158cd9e2",
+          "type": "validation",
+          "title": "Validator",
+          "description": "An example validation component",
+          "props": [
+            {
+              "name": "Rule_Id",
+              "ns": "https://oscal-compass.github.io/compliance-trestle/schemas/oscal/cd",
+              "value": "rule-1",
+              "remarks": "rule_set_00"
+            },
+            {
+              "name": "Rule_Description",
+              "ns": "https://oscal-compass.github.io/compliance-trestle/schemas/oscal/cd",
+              "value": "Rule 1 description",
+              "remarks": "rule_set_00"
+            },
+            {
+              "name": "Check_Id",
+              "ns": "https://oscal-compass.github.io/compliance-trestle/schemas/oscal/cd",
+              "value": "check-1",
+              "remarks": "rule_set_00"
+            },
+            {
+              "name": "Check_Description",
+              "ns": "https://oscal-compass.github.io/compliance-trestle/schemas/oscal/cd",
+              "value": "Check 1 Description",
+              "remarks": "rule_set_00"
+            }
+          ]
+        }
+      ]
+    },
+    "control-implementation": {
+      "description": "This is an example control implementation for the system.",
+      "implemented-requirements": [
+        {
+          "uuid": "db7b97db-dadc-4afd-850a-245ca09cb811",
+          "control-id": "ex-1",
+          "statements": [
+            {
+              "statement-id": "ex-1_smt",
+              "uuid": "7ad47329-dc55-4196-a19d-178a8fe7438e",
+              "by-components": [
+                {
+                  "component-uuid": "a95533ab-9427-4abe-820f-0b571bacfe6d",
+                  "uuid": "a64681b2-fbcb-46eb-90fd-0d55aa74ac7c",
+                  "description": "Example 1 Statement Implementation",
+                  "props": [
+                    {
+                      "name": "Rule_Id",
+                      "ns": "https://oscal-compass.github.io/compliance-trestle/schemas/oscal/cd",
+                      "value": "rule-1"
+                    }
+                  ]
+                }
+                ]
+            }
+          ],
+          "by-components": [
+            {
+              "component-uuid": "4e19131e-b361-4f0e-8262-02bf4456202e",
+              "uuid": "126b5dcd-30cc-4521-9aa8-5f9f6781a6c4",
+              "description": "Example 1 implementation",
+              "props": [
+                {
+                  "name": "Rule_Id",
+                  "ns": "https://oscal-compass.github.io/compliance-trestle/schemas/oscal/cd",
+                  "value": "rule-2"
+                }
+              ],
+              "implementation-status": {
+                "state": "planned"
+              }
+            },
+            {
+              "component-uuid": "ceb0b4b0-8b3c-4e71-8874-57d42c0f36e3",
+              "uuid": "04deed1d-87c2-4ec6-8a6c-5973511d8758",
+              "description": "",
+              "implementation-status": {
+                "state": "planned"
+              }
+            }
+          ]
+        },
+        {
+          "uuid": "08e93a77-16e3-4881-9694-e77f114a164b",
+          "control-id": "ex-2",
+          "by-components": [
+            {
+              "component-uuid": "4e19131e-b361-4f0e-8262-02bf4456202e",
+              "uuid": "d93f7198-5ea9-4add-a279-7428098e9b48",
+              "description": "Example 2 implementation",
+              "props": [
+                {
+                  "name": "Rule_Id",
+                  "ns": "https://oscal-compass.github.io/compliance-trestle/schemas/oscal/cd",
+                  "value": "rule-1"
+                }
+              ],
+              "set-parameters": [
+                {
+                  "param-id": "param-1",
+                  "values": [
+                    "2"
+                  ]
+                }
+              ],
+              "implementation-status": {
+                "state": "planned"
+              }
+            },
+            {
+              "component-uuid": "ceb0b4b0-8b3c-4e71-8874-57d42c0f36e3",
+              "uuid": "7c045a8d-74c6-4047-a17f-b6661660b332",
+              "description": "",
+              "implementation-status": {
+                "state": "planned"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
