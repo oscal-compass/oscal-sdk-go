@@ -43,7 +43,7 @@ type findOptions struct {
 	namespace string
 }
 
-// FindOption define an options for searching oscal Property
+// FindOption define an option for searching oscal Property
 // sets.
 type FindOption func(opts *findOptions)
 
