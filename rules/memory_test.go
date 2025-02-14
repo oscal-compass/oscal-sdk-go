@@ -15,6 +15,7 @@ import (
 
 	"github.com/oscal-compass/oscal-sdk-go/extensions"
 	"github.com/oscal-compass/oscal-sdk-go/generators"
+	"github.com/oscal-compass/oscal-sdk-go/models/components"
 )
 
 var (
@@ -87,8 +88,14 @@ func TestMemoryStore_IndexAll(t *testing.T) {
 				definition.Components = &[]oscaltypes112.DefinedComponent{}
 			}
 
+			var comps []components.Component
+			for _, cp := range *definition.Components {
+				adapters := components.NewDefinedComponentAdapter(cp)
+				comps = append(comps, adapters)
+			}
+
 			testMemory := NewMemoryStore()
-			err = testMemory.IndexAll(*definition.Components)
+			err = testMemory.IndexAll(comps)
 
 			if c.expError != "" {
 				require.EqualError(t, err, c.expError)
@@ -143,7 +150,7 @@ func TestMemoryStore_FindByComponent(t *testing.T) {
 	testMemory := prepMemoryStore(t)
 	testCtx := context.Background()
 
-	softwareRuleSet, err := testMemory.FindByComponent(testCtx, "Kubernetes")
+	softwareRuleSet, err := testMemory.FindByComponent(testCtx, "TestKubernetes")
 	require.NoError(t, err)
 
 	require.Contains(t, softwareRuleSet, expectedCertFileRule)
@@ -169,7 +176,13 @@ func prepMemoryStore(t *testing.T) *MemoryStore {
 	definition, err := generators.NewComponentDefinition(file)
 	require.NoError(t, err)
 	testMemory := NewMemoryStore()
-	err = testMemory.IndexAll(*definition.Components)
+
+	var comps []components.Component
+	for _, cp := range *definition.Components {
+		adapters := components.NewDefinedComponentAdapter(cp)
+		comps = append(comps, adapters)
+	}
+	err = testMemory.IndexAll(comps)
 	require.NoError(t, err)
 
 	return testMemory
