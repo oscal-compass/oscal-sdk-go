@@ -13,7 +13,7 @@ import (
 	oscalTypes "github.com/defenseunicorns/go-oscal/src/types/oscal-1-1-2"
 
 	"github.com/oscal-compass/oscal-sdk-go/extensions"
-	"github.com/oscal-compass/oscal-sdk-go/generators"
+	"github.com/oscal-compass/oscal-sdk-go/models"
 	"github.com/oscal-compass/oscal-sdk-go/models/components"
 	"github.com/oscal-compass/oscal-sdk-go/rules"
 	"github.com/oscal-compass/oscal-sdk-go/settings"
@@ -30,8 +30,8 @@ type generateOpts struct {
 }
 
 func (g *generateOpts) defaults() {
-	g.title = generators.SampleRequiredString
-	g.importSSP = generators.SampleRequiredString
+	g.title = models.SampleRequiredString
+	g.importSSP = models.SampleRequiredString
 }
 
 // GenerateOption defines an option to tune the behavior of the
@@ -109,19 +109,15 @@ func GenerateAssessmentPlan(ctx context.Context, comps []components.Component, i
 
 		// Here we assume the Components are from a corresponding
 		// SSP making them locally defined.
-		if options.importSSP == generators.SampleRequiredString {
+		if options.importSSP == models.SampleRequiredString {
 			localComponents = append(localComponents, comp)
 		}
 	}
 
 	assessmentAssets := AssessmentAssets(comps)
-	taskAssessmentSubject := oscalTypes.AssessmentSubject{
-		IncludeSubjects: &subjectSelectors,
-		Type:            defaultSubjectType,
-	}
-	*ruleBasedTask.Subjects = append(*ruleBasedTask.Subjects, taskAssessmentSubject)
+	*ruleBasedTask.Subjects = append(*ruleBasedTask.Subjects, oscalTypes.AssessmentSubject{IncludeSubjects: &subjectSelectors})
 
-	metadata := generators.NewSampleMetadata()
+	metadata := models.NewSampleMetadata()
 	metadata.Title = options.title
 
 	assessmentPlan := &oscalTypes.AssessmentPlan{
@@ -151,7 +147,7 @@ func newTask() oscalTypes.Task {
 		UUID:                 uuid.NewUUID(),
 		Title:                "Automated Assessment",
 		Type:                 defaultTaskType,
-		Description:          "Evaluation of defined rules for components.",
+		Description:          "Evaluation of defined rules for applicable comps.",
 		Subjects:             &[]oscalTypes.AssessmentSubject{},
 		AssociatedActivities: &[]oscalTypes.AssociatedActivity{},
 	}
@@ -296,12 +292,20 @@ func AssessmentAssets(comps []components.Component) oscalTypes.AssessmentAssets 
 
 		}
 	}
+
 	// AssessmentPlatforms is a required field under AssessmentAssets
 	assessmentPlatform := oscalTypes.AssessmentPlatform{
-		UUID:           uuid.NewUUID(),
-		Title:          generators.SampleRequiredString,
-		UsesComponents: &usedComponents,
+		UUID:  uuid.NewUUID(),
+		Title: models.SampleRequiredString,
 	}
+
+	if len(usedComponents) == 0 {
+		return oscalTypes.AssessmentAssets{
+			AssessmentPlatforms: []oscalTypes.AssessmentPlatform{assessmentPlatform},
+		}
+	}
+
+	assessmentPlatform.UsesComponents = &usedComponents
 	assessmentAssets := oscalTypes.AssessmentAssets{
 		Components:          &systemComponents,
 		AssessmentPlatforms: []oscalTypes.AssessmentPlatform{assessmentPlatform},

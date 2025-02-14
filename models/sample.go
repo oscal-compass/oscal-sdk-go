@@ -3,17 +3,17 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package generators
+package models
 
 import (
 	"time"
 
 	oscalTypes "github.com/defenseunicorns/go-oscal/src/types/oscal-1-1-2"
+
+	"github.com/oscal-compass/oscal-sdk-go/validation"
 )
 
 const (
-	// OSCALVersion is the string that represents the version of OSCAL supported.
-	OSCALVersion = "1.1.2"
 	// SampleRequiredString is the default string for required string data in
 	// OSCAL models. This value matched the default value used in compliance-trestle.
 	SampleRequiredString = "REPLACE_ME"
@@ -26,7 +26,7 @@ func NewSampleMetadata() oscalTypes.Metadata {
 	return oscalTypes.Metadata{
 		Title:        SampleRequiredString,
 		LastModified: time.Now(),
-		OscalVersion: OSCALVersion,
+		OscalVersion: validation.OSCALVersion,
 		Version:      defaultVersion,
 	}
 }

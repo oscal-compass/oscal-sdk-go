@@ -14,8 +14,10 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/oscal-compass/oscal-sdk-go/extensions"
-	"github.com/oscal-compass/oscal-sdk-go/generators"
 	"github.com/oscal-compass/oscal-sdk-go/internal/set"
+	"github.com/oscal-compass/oscal-sdk-go/models"
+	"github.com/oscal-compass/oscal-sdk-go/models/components"
+	"github.com/oscal-compass/oscal-sdk-go/validation"
 )
 
 func TestMerge(t *testing.T) {
@@ -233,7 +235,8 @@ func TestMerge(t *testing.T) {
 	for _, c := range tests {
 		t.Run(c.name, func(t *testing.T) {
 			testSettings := prepSettings(t)
-			testSettings.merge(c.inputImplementation)
+			adapter := components.NewControlImplementationSetAdapter(c.inputImplementation)
+			testSettings.merge(adapter)
 			require.Equal(t, c.wantSettings, *testSettings)
 		})
 	}
@@ -259,7 +262,7 @@ func prepSettings(t *testing.T) *ImplementationSettings {
 
 	file, err := os.Open(testDataPath)
 	require.NoError(t, err)
-	definition, err := generators.NewComponentDefinition(file)
+	definition, err := models.NewComponentDefinition(file, validation.NoopValidator{})
 	require.NoError(t, err)
 	require.NotNil(t, definition)
 	var allImplementations []oscalTypes.ControlImplementationSet
