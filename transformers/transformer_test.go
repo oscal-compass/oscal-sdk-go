@@ -6,7 +6,6 @@
 package transformers
 
 import (
-	"context"
 	"os"
 	"path/filepath"
 	"testing"
@@ -28,7 +27,7 @@ func TestComponentDefinitionsToAssessmentPlan(t *testing.T) {
 	require.NotNil(t, definition)
 	require.NotNil(t, definition.Components)
 
-	plan, err := ComponentDefinitionsToAssessmentPlan(context.TODO(), []oscalTypes.ComponentDefinition{*definition}, "cis")
+	plan, err := ComponentDefinitionsToAssessmentPlan([]oscalTypes.ComponentDefinition{*definition}, "cis")
 	require.NoError(t, err)
 
 	require.Len(t, *plan.LocalDefinitions.Activities, 2)
@@ -56,7 +55,7 @@ func TestSSPToAssessmentPlan(t *testing.T) {
 	require.NoError(t, err)
 	require.NotNil(t, ssp)
 
-	plan, err := SSPToAssessmentPlan(context.TODO(), *ssp, "importPath")
+	plan, err := SSPToAssessmentPlan(*ssp, "importPath")
 	require.NoError(t, err)
 
 	require.Len(t, *plan.LocalDefinitions.Activities, 2)
