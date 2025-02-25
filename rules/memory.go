@@ -64,23 +64,51 @@ func (m *MemoryStore) IndexAll(components []components.Component) error {
 		return fmt.Errorf("failed to index components: %w", ErrComponentsNotFound)
 	}
 	for _, component := range components {
-		extractedRules := m.indexComponent(component)
+
+		// Catalog information here at the component in the MemoryStore at the
+		// component level
+
+		componentTitle := component.Title()
+		extractedRules, extractedChecks := m.indexComponent(component)
 		if len(extractedRules) != 0 {
+			existingRules, ok := m.rulesByComponent[componentTitle]
+			if ok {
+				for rule := range existingRules {
+					extractedRules.Add(rule)
+				}
+			}
 			m.rulesByComponent[component.Title()] = extractedRules
+		}
+		existingRules, ok := m.rulesByComponent[componentTitle]
+		if ok {
+			for rule := range existingRules {
+				extractedRules.Add(rule)
+			}
+		}
+
+		if len(extractedChecks) != 0 {
+			existingChecks, ok := m.checksByValidationComponent[componentTitle]
+			if ok {
+				for check := range existingChecks {
+					extractedChecks.Add(check)
+				}
+			}
+			m.checksByValidationComponent[componentTitle] = extractedChecks
 		}
 	}
 	return nil
 }
 
-func (m *MemoryStore) indexComponent(component components.Component) set.Set[string] {
-	rules := set.New[string]()
-	if len(component.Props()) == 0 {
-		return rules
-	}
-
-	// Catalog all registered check implementations by validation component for filtering in
+// indexComponent returns extracted rules and checks (respectively) from a given component.
+func (m *MemoryStore) indexComponent(component components.Component) (set.Set[string], set.Set[string]) {
+	// Catalog all registered rules for all components and check implementations by validation component for filtering in
 	// `rules.FindByComponent`.
-	checkIds := set.New[string]()
+	rules := set.New[string]()
+	checks := set.New[string]()
+
+	if len(component.Props()) == 0 {
+		return rules, checks
+	}
 
 	// Each rule set is linked by a group id in the property remarks
 	byRemarks := groupPropsByRemarks(component.Props())
@@ -95,7 +123,8 @@ func (m *MemoryStore) indexComponent(component components.Component) set.Set[str
 			ruleSet = extensions.RuleSet{}
 		}
 
-		// A check may or may not be registered.
+		// A check may or may not be registered depending on
+		// component.Type().
 		placeholderCheck := extensions.Check{}
 
 		for prop := range propSet {
@@ -130,15 +159,13 @@ func (m *MemoryStore) indexComponent(component components.Component) set.Set[str
 		if placeholderCheck.ID != "" {
 			ruleSet.Checks = append(ruleSet.Checks, placeholderCheck)
 			m.byCheck[placeholderCheck.ID] = ruleSet.Rule.ID
+			checks.Add(placeholderCheck.ID)
 		}
 		rules.Add(ruleSet.Rule.ID)
 		m.nodes[ruleSet.Rule.ID] = ruleSet
 	}
-	if len(checkIds) != 0 {
-		m.checksByValidationComponent[component.Title()] = checkIds
-	}
 
-	return rules
+	return rules, checks
 }
 
 func (m *MemoryStore) GetByRuleID(_ context.Context, ruleId string) (extensions.RuleSet, error) {

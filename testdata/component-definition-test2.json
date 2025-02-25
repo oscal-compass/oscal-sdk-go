@@ -23,19 +23,7 @@
           {
             "name": "Rule_Description",
             "ns": "https://oscal-compass.github.io/compliance-trestle/schemas/oscal/cd",
-            "value": "Example rule 1",
-            "remarks": "rule_set_00"
-          },
-          {
-            "name": "Parameter_Id",
-            "ns": "https://oscal-compass.github.io/compliance-trestle/schemas/oscal/cd",
-            "value": "file_name",
-            "remarks": "rule_set_00"
-          },
-          {
-            "name": "Parameter_Description",
-            "ns": "https://oscal-compass.github.io/compliance-trestle/schemas/oscal/cd",
-            "value": "A parameter for a file name",
+            "value": "Example rule 1 description",
             "remarks": "rule_set_00"
           }
         ],
@@ -44,14 +32,6 @@
             "uuid": "f79d6290-8efa-4ea7-b931-27b8435cf707",
             "source": "profiles/cis/profile.json",
             "description": "CIS Profile",
-            "set-parameters": [
-              {
-                "param-id": "file_name",
-                "values": [
-                  "file_name_override"
-                ]
-              }
-            ],
             "implemented-requirements": [
               {
                 "uuid": "a1b5b713-52c7-46fb-ab57-ebac7f576b23",
@@ -91,7 +71,7 @@
           {
             "name": "Rule_Description",
             "ns": "https://oscal-compass.github.io/compliance-trestle/schemas/oscal/cd",
-            "value": "Example rule 1",
+            "value": "Example rule 1 description",
             "remarks": "rule_set_10"
           },
           {
