@@ -15,10 +15,11 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/oscal-compass/oscal-sdk-go/extensions"
-	"github.com/oscal-compass/oscal-sdk-go/generators"
+	"github.com/oscal-compass/oscal-sdk-go/models"
 	"github.com/oscal-compass/oscal-sdk-go/models/components"
 	"github.com/oscal-compass/oscal-sdk-go/rules"
 	"github.com/oscal-compass/oscal-sdk-go/settings"
+	"github.com/oscal-compass/oscal-sdk-go/validation"
 )
 
 func TestGenerateAssessmentPlan(t *testing.T) {
@@ -48,8 +49,8 @@ func TestGenerateAssessmentPlan(t *testing.T) {
 				require.Len(t, *plan.AssessmentAssets.Components, 2)
 
 				// Validate default string
-				require.Equal(t, plan.Metadata.Title, generators.SampleRequiredString)
-				require.Equal(t, plan.ImportSsp.Href, generators.SampleRequiredString)
+				require.Equal(t, plan.Metadata.Title, models.SampleRequiredString)
+				require.Equal(t, plan.ImportSsp.Href, models.SampleRequiredString)
 
 				require.NotNil(t, plan.LocalDefinitions.Components)
 				require.Len(t, *plan.LocalDefinitions.Components, 1)
@@ -149,7 +150,7 @@ func readCompDef(t *testing.T) oscalTypes.ComponentDefinition {
 
 	file, err := os.Open(testDataPath)
 	require.NoError(t, err)
-	definition, err := generators.NewComponentDefinition(file)
+	definition, err := models.NewComponentDefinition(file, validation.NoopValidator{})
 	require.NoError(t, err)
 	require.NotNil(t, definition)
 	return *definition
