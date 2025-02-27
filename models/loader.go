@@ -100,7 +100,7 @@ func NewAssessmentPlan(reader io.Reader, validator validation.Validator) (assess
 }
 
 // NewAssessmentResults creates a new OSCAL-based assessment results set using types from `go-oscal`.
-func NewAssessmentResults(reader io.Reader, validator validation.Validator) (assessmentResult *oscalTypes.AssessmentResults, err error) {
+func NewAssessmentResults(reader io.Reader, validator validation.Validator) (assessmentResults *oscalTypes.AssessmentResults, err error) {
 	var oscalModels oscalTypes.OscalModels
 	dec := json.NewDecoder(reader)
 	dec.DisallowUnknownFields()
