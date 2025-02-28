@@ -168,7 +168,7 @@ func TestMemoryStore_FindByComponent(t *testing.T) {
 	_, err = testMemory.FindByComponent(testCtx, "not_a_component")
 	require.EqualError(t, err, "failed to find rules for component \"not_a_component\"")
 
-	// Add a new target component for ="Validator"
+	// Add a new target component for "Validator"
 	testDataPath := "../testdata/component-definition-test2.json"
 	loadComponents(t, testMemory, testDataPath)
 
