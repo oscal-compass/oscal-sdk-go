@@ -14,7 +14,8 @@ import (
 	oscalTypes "github.com/defenseunicorns/go-oscal/src/types/oscal-1-1-2"
 	"github.com/stretchr/testify/require"
 
-	"github.com/oscal-compass/oscal-sdk-go/generators"
+	"github.com/oscal-compass/oscal-sdk-go/models"
+	"github.com/oscal-compass/oscal-sdk-go/validation"
 )
 
 func TestComponentDefinitionsToAssessmentPlan(t *testing.T) {
@@ -22,7 +23,7 @@ func TestComponentDefinitionsToAssessmentPlan(t *testing.T) {
 
 	file, err := os.Open(testDataPath)
 	require.NoError(t, err)
-	definition, err := generators.NewComponentDefinition(file)
+	definition, err := models.NewComponentDefinition(file, validation.NoopValidator{})
 	require.NoError(t, err)
 	require.NotNil(t, definition)
 	require.NotNil(t, definition.Components)

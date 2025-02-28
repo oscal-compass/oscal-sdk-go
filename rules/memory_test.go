@@ -14,8 +14,9 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/oscal-compass/oscal-sdk-go/extensions"
-	"github.com/oscal-compass/oscal-sdk-go/generators"
+	"github.com/oscal-compass/oscal-sdk-go/models"
 	"github.com/oscal-compass/oscal-sdk-go/models/components"
+	"github.com/oscal-compass/oscal-sdk-go/validation"
 )
 
 var (
@@ -81,7 +82,7 @@ func TestMemoryStore_IndexAll(t *testing.T) {
 		t.Run(c.name, func(t *testing.T) {
 			file, err := os.Open(c.testDataPath)
 			require.NoError(t, err)
-			definition, err := generators.NewComponentDefinition(file)
+			definition, err := models.NewComponentDefinition(file, validation.NoopValidator{})
 			require.NoError(t, err)
 
 			if definition.Components == nil {
@@ -201,7 +202,7 @@ func prepMemoryStore(t *testing.T) *MemoryStore {
 func loadComponents(t *testing.T, store *MemoryStore, testDataPath string) {
 	file, err := os.Open(testDataPath)
 	require.NoError(t, err)
-	definition, err := generators.NewComponentDefinition(file)
+	definition, err := models.NewComponentDefinition(file, validation.NoopValidator{})
 	require.NoError(t, err)
 
 	var comps []components.Component
