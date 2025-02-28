@@ -159,6 +159,7 @@ func TestMemoryStore_FindByComponent(t *testing.T) {
 
 	validator1RuleSet, err := testMemory.FindByComponent(testCtx, "Validator")
 	require.NoError(t, err)
+	require.Len(t, validator1RuleSet, 1)
 	require.Contains(t, validator1RuleSet, expectedKeyFileRule)
 
 	validator2RuleSet, err := testMemory.FindByComponent(testCtx, "Validator2")
@@ -167,24 +168,48 @@ func TestMemoryStore_FindByComponent(t *testing.T) {
 
 	_, err = testMemory.FindByComponent(testCtx, "not_a_component")
 	require.EqualError(t, err, "failed to find rules for component \"not_a_component\"")
+
+	// Add a new target component for "Validator"
+	testDataPath := "../testdata/component-definition-test2.json"
+	loadComponents(t, testMemory, testDataPath)
+
+	expectedExampleRule := extensions.RuleSet{
+		Rule: extensions.Rule{
+			ID:          "example_rule_1",
+			Description: "Example rule 1 description",
+		},
+		Checks: []extensions.Check{
+			{
+				ID:          "example_check_1",
+				Description: "Example check 1 description",
+			},
+		},
+	}
+
+	validator1RuleSet, err = testMemory.FindByComponent(testCtx, "Validator")
+	require.NoError(t, err)
+	require.Len(t, validator1RuleSet, 2)
+	require.Contains(t, validator1RuleSet, expectedExampleRule, expectedKeyFileRule)
 }
 
 func prepMemoryStore(t *testing.T) *MemoryStore {
 	testDataPath := "../testdata/component-definition-test.json"
+	testMemory := NewMemoryStore()
+	loadComponents(t, testMemory, testDataPath)
+	return testMemory
+}
 
+func loadComponents(t *testing.T, store *MemoryStore, testDataPath string) {
 	file, err := os.Open(testDataPath)
 	require.NoError(t, err)
 	definition, err := models.NewComponentDefinition(file, validation.NoopValidator{})
 	require.NoError(t, err)
-	testMemory := NewMemoryStore()
 
 	var comps []components.Component
 	for _, cp := range *definition.Components {
 		adapters := components.NewDefinedComponentAdapter(cp)
 		comps = append(comps, adapters)
 	}
-	err = testMemory.IndexAll(comps)
+	err = store.IndexAll(comps)
 	require.NoError(t, err)
-
-	return testMemory
 }
