@@ -70,6 +70,8 @@ func TestSSPToAssessmentPlan(t *testing.T) {
 	for _, act := range *plan.LocalDefinitions.Activities {
 		activities = append(activities, act.Title)
 	}
+
 	require.Contains(t, activities, "rule-1")
 	require.Contains(t, activities, "rule-2")
+
 }
