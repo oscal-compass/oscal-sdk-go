@@ -52,7 +52,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to open component definition, %v", err)
 	}
-	definition, err := generators.NewComponentDefinition(file)
+	definition, err := models.NewComponentDefinition(file, validation.NoopValidator{})
 	if err != nil {
 		log.Fatalf("failed to read component definition, %v", err)
 	}
@@ -66,7 +66,7 @@ func main() {
 		if err != nil {
 			log.Fatalf("failed to marshal assessment plan, %v", err)
 		}
-		fmt.Println(assessmentPlanJSON)
+		fmt.Println(string(assessmentPlanJSON))
 	}
 }
 ```

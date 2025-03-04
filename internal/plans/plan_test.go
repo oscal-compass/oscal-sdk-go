@@ -80,8 +80,7 @@ func TestGenerateAssessmentPlan(t *testing.T) {
 
 	for _, c := range tests {
 		t.Run(c.name, func(t *testing.T) {
-			ctx := context.TODO()
-			assessmentPlan, err := GenerateAssessmentPlan(ctx, c.inputComponents, c.inputSetting, c.inputOptions...)
+			assessmentPlan, err := GenerateAssessmentPlan(c.inputComponents, c.inputSetting, c.inputOptions...)
 			if c.expError != "" {
 				require.EqualError(t, err, c.expError)
 			} else {
