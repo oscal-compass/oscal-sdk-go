@@ -15,7 +15,7 @@ Below is a table to show what is currently supported by the SDK.
 | SDK Functionality                         | Supported          |
 |-------------------------------------------|--------------------|
 | OSCAL Types with Basic Trestle Extensions | :heavy_check_mark: |
-| OSCAL Schema Validation                   | :x:                |
+| OSCAL Schema Validation                   | :heavy_check_mark: |
 | Target Components Extension               | :x:                |
 | Multiple Parameters per Rule              | :x:                |
 | OSCAL to OSCAL Transformation             | :heavy_check_mark: |
@@ -40,19 +40,20 @@ go get github.com/oscal-compass/oscal-sdk-go
 
 ```go
 import (
-	...
+    ...
 	oscalTypes "github.com/defenseunicorns/go-oscal/src/types/oscal-1-1-2"
+	"github.com/oscal-compass/oscal-sdk-go/validation"
 
-	"github.com/oscal-compass/oscal-sdk-go/generators"
+	"github.com/oscal-compass/oscal-sdk-go/models"
 	"github.com/oscal-compass/oscal-sdk-go/transformers"
 )
 
 func main() {
-	file, err := os.Open("path-to-my-compdef")
+	file, err := os.Open("example-component-definition.json")
 	if err != nil {
 		log.Fatalf("failed to open component definition, %v", err)
 	}
-	definition, err := generators.NewComponentDefinition(file)
+	definition, err := models.NewComponentDefinition(file, validation.NoopValidator{})
 	if err != nil {
 		log.Fatalf("failed to read component definition, %v", err)
 	}
@@ -66,7 +67,7 @@ func main() {
 		if err != nil {
 			log.Fatalf("failed to marshal assessment plan, %v", err)
 		}
-		fmt.Println(assessmentPlanJSON)
+		fmt.Println(string(assessmentPlanJSON))
 	}
 }
 ```
