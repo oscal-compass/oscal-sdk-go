@@ -35,6 +35,9 @@ const (
 	// TestParameterClass represents the property class for all test parameters
 	// in OSCAL Activity types in Assessment Plans.
 	TestParameterClass = "test-parameter"
+	// AssessmentRuleIdProp represent the property name for a rule associated to an OSCAL
+	// Observation.
+	AssessmentRuleIdProp = "assessment-rule-id"
 )
 
 type findOptions struct {

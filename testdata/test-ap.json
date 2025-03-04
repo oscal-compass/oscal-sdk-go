@@ -1,0 +1,202 @@
+{
+  "assessment-plan": {
+    "assessment-assets": {
+      "assessment-platforms": [
+        {
+          "title": "REPLACE_ME",
+          "uses-components": [
+            {
+              "component-uuid": "701c70f1-482b-42b0-a419-9870158cd9e2"
+            }
+          ],
+          "uuid": "9b16ad9b-0289-4999-83be-f1dcf5bf16ec"
+        }
+      ],
+      "components": [
+        {
+          "description": "An example validation component",
+          "props": [
+            {
+              "name": "Rule_Id",
+              "ns": "https://oscal-compass.github.io/compliance-trestle/schemas/oscal/cd",
+              "remarks": "rule_set_00",
+              "value": "rule-1"
+            },
+            {
+              "name": "Rule_Description",
+              "ns": "https://oscal-compass.github.io/compliance-trestle/schemas/oscal/cd",
+              "remarks": "rule_set_00",
+              "value": "Rule 1 description"
+            },
+            {
+              "name": "Check_Id",
+              "ns": "https://oscal-compass.github.io/compliance-trestle/schemas/oscal/cd",
+              "remarks": "rule_set_00",
+              "value": "check-1"
+            },
+            {
+              "name": "Check_Description",
+              "ns": "https://oscal-compass.github.io/compliance-trestle/schemas/oscal/cd",
+              "remarks": "rule_set_00",
+              "value": "Check 1 Description"
+            }
+          ],
+          "status": {
+            "state": ""
+          },
+          "title": "Validator",
+          "type": "validation",
+          "uuid": "701c70f1-482b-42b0-a419-9870158cd9e2"
+        }
+      ]
+    },
+    "assessment-subjects": [
+      {
+        "include-subjects": [
+          {
+            "subject-uuid": "4e19131e-b361-4f0e-8262-02bf4456202e",
+            "type": "component"
+          }
+        ],
+        "type": "component"
+      }
+    ],
+    "import-ssp": {
+      "href": "importPath"
+    },
+    "local-definitions": {
+      "activities": [
+        {
+          "description": "Rule 1 description",
+          "props": [
+            {
+              "name": "method",
+              "value": "TEST"
+            },
+            {
+              "class": "test-parameter",
+              "name": "param-1",
+              "ns": "https://oscal-compass.github.io/compliance-trestle/schemas/oscal",
+              "value": ""
+            }
+          ],
+          "related-controls": {
+            "control-selections": [
+              {
+                "include-controls": [
+                  {
+                    "control-id": "ex-2"
+                  },
+                  {
+                    "control-id": "ex-1"
+                  }
+                ]
+              }
+            ]
+          },
+          "steps": [
+            {
+              "description": "Check 1 Description",
+              "title": "check-1",
+              "uuid": "f400ad11-4fe0-44e5-a6a7-072fe504ad6e"
+            }
+          ],
+          "title": "rule-1",
+          "uuid": "a0d9f3fd-eec7-4cb2-9627-1dbfef82d69a"
+        },
+        {
+          "description": "Rule 2 description",
+          "props": [
+            {
+              "name": "method",
+              "value": "TEST"
+            }
+          ],
+          "related-controls": {
+            "control-selections": [
+              {
+                "include-controls": [
+                  {
+                    "control-id": "ex-1"
+                  }
+                ]
+              }
+            ]
+          },
+          "title": "rule-2",
+          "uuid": "eab9e38a-1192-4b52-b0e1-5f21259864ff"
+        }
+      ]
+    },
+    "metadata": {
+      "last-modified": "2025-03-03T18:45:12.317034671-05:00",
+      "oscal-version": "1.1.2",
+      "title": "REPLACE_ME",
+      "version": "0.1.0"
+    },
+    "reviewed-controls": {
+      "control-selections": [
+        {
+          "include-controls": [
+            {
+              "control-id": "ex-1"
+            },
+            {
+              "control-id": "ex-2"
+            }
+          ]
+        }
+      ]
+    },
+    "tasks": [
+      {
+        "associated-activities": [
+          {
+            "activity-uuid": "a0d9f3fd-eec7-4cb2-9627-1dbfef82d69a",
+            "subjects": [
+              {
+                "include-subjects": [
+                  {
+                    "subject-uuid": "4e19131e-b361-4f0e-8262-02bf4456202e",
+                    "type": "component"
+                  }
+                ],
+                "type": "component"
+              }
+            ]
+          },
+          {
+            "activity-uuid": "eab9e38a-1192-4b52-b0e1-5f21259864ff",
+            "subjects": [
+              {
+                "include-subjects": [
+                  {
+                    "subject-uuid": "4e19131e-b361-4f0e-8262-02bf4456202e",
+                    "type": "component"
+                  }
+                ],
+                "type": "component"
+              }
+            ]
+          }
+        ],
+        "description": "Evaluation of defined rules for applicable comps.",
+        "subjects": [
+          {
+            "include-subjects": [
+              {
+                "subject-uuid": "4e19131e-b361-4f0e-8262-02bf4456202e",
+                "type": "component"
+              }
+            ],
+            "type": "component"
+          }
+        ],
+        "title": "Automated Assessment",
+        "type": "action",
+        "uuid": "0733aaa9-9743-4971-967c-bbd951bb9026"
+      }
+    ],
+    "uuid": "4b3c30b3-bba9-43b1-ab49-73431fd09661"
+  }
+}
