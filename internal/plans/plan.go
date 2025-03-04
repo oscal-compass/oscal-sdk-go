@@ -107,9 +107,9 @@ func GenerateAssessmentPlan(ctx context.Context, comps []components.Component, i
 		associatedActivities := AssessmentActivities(assessmentSubject, componentActivities)
 		*ruleBasedTask.AssociatedActivities = append(*ruleBasedTask.AssociatedActivities, associatedActivities...)
 
-		// Here we assume the Components are from a corresponding
-		// SSP making them locally defined.
 		if options.importSSP == models.SampleRequiredString {
+			// In this use case, there is no linked SSP, making specified Components
+			// locally defined.
 			localComponents = append(localComponents, comp)
 		}
 	}
