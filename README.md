@@ -52,7 +52,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to open component definition, %v", err)
 	}
-	definition, err := models.NewComponentDefinition(file)
+	definition, err := models.NewComponentDefinition(file, validation.NoopValidator{})
 	if err != nil {
 		log.Fatalf("failed to read component definition, %v", err)
 	}
