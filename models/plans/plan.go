@@ -115,7 +115,11 @@ func GenerateAssessmentPlan(ctx context.Context, comps []components.Component, i
 	}
 
 	assessmentAssets := AssessmentAssets(comps)
-	*ruleBasedTask.Subjects = append(*ruleBasedTask.Subjects, oscalTypes.AssessmentSubject{IncludeSubjects: &subjectSelectors})
+	taskSubjects := oscalTypes.AssessmentSubject{
+		IncludeSubjects: &subjectSelectors,
+		Type:            defaultSubjectType,
+	}
+	*ruleBasedTask.Subjects = append(*ruleBasedTask.Subjects, taskSubjects)
 
 	metadata := models.NewSampleMetadata()
 	metadata.Title = options.title
@@ -147,7 +151,7 @@ func newTask() oscalTypes.Task {
 		UUID:                 uuid.NewUUID(),
 		Title:                "Automated Assessment",
 		Type:                 defaultTaskType,
-		Description:          "Evaluation of defined rules for applicable comps.",
+		Description:          "Evaluation of defined rules for components.",
 		Subjects:             &[]oscalTypes.AssessmentSubject{},
 		AssociatedActivities: &[]oscalTypes.AssociatedActivity{},
 	}
@@ -194,7 +198,7 @@ func ActivitiesForComponent(ctx context.Context, targetComponentID string, store
 			Props:           &[]oscalTypes.Property{methodProp},
 			RelatedControls: &relatedControls,
 			Title:           rule.Rule.ID,
-			Steps:           &steps,
+			Steps:           models.NilIfEmpty(&steps),
 		}
 
 		for _, rp := range rule.Rule.Parameters {
@@ -295,17 +299,11 @@ func AssessmentAssets(comps []components.Component) oscalTypes.AssessmentAssets 
 
 	// AssessmentPlatforms is a required field under AssessmentAssets
 	assessmentPlatform := oscalTypes.AssessmentPlatform{
-		UUID:  uuid.NewUUID(),
-		Title: models.SampleRequiredString,
+		UUID:           uuid.NewUUID(),
+		Title:          models.SampleRequiredString,
+		UsesComponents: models.NilIfEmpty(&usedComponents),
 	}
 
-	if len(usedComponents) == 0 {
-		return oscalTypes.AssessmentAssets{
-			AssessmentPlatforms: []oscalTypes.AssessmentPlatform{assessmentPlatform},
-		}
-	}
-
-	assessmentPlatform.UsesComponents = &usedComponents
 	assessmentAssets := oscalTypes.AssessmentAssets{
 		Components:          &systemComponents,
 		AssessmentPlatforms: []oscalTypes.AssessmentPlatform{assessmentPlatform},
