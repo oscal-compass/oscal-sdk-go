@@ -45,6 +45,13 @@ func TestComponentDefinitionsToAssessmentPlan(t *testing.T) {
 	}
 	require.Contains(t, activities, "etcd_cert_file")
 	require.Contains(t, activities, "etcd_key_file")
+
+	// Validate against the schema
+	validator := validation.NewSchemaValidator()
+	oscalModels := oscalTypes.OscalModels{
+		AssessmentPlan: plan,
+	}
+	require.NoError(t, validator.Validate(oscalModels))
 }
 
 func TestSSPToAssessmentPlan(t *testing.T) {
@@ -73,4 +80,11 @@ func TestSSPToAssessmentPlan(t *testing.T) {
 	}
 	require.Contains(t, activities, "rule-1")
 	require.Contains(t, activities, "rule-2")
+
+	// Validate against the schema
+	validator := validation.NewSchemaValidator()
+	oscalModels := oscalTypes.OscalModels{
+		AssessmentPlan: plan,
+	}
+	require.NoError(t, validator.Validate(oscalModels))
 }
