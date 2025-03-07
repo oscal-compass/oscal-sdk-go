@@ -50,7 +50,7 @@ func TestControlImplementationAdapter(t *testing.T) {
 
 	adapter := NewControlImplementationAdapter(ssp.ControlImplementation)
 	require.Len(t, adapter.Requirements(), 2)
-	require.Len(t, adapter.SetParameters(), 0)
+	require.Len(t, adapter.SetParameters(), 1)
 	require.Len(t, adapter.Props(), 0)
 
 	impReq := adapter.Requirements()[0]
