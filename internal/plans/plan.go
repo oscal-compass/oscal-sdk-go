@@ -107,19 +107,15 @@ func GenerateAssessmentPlan(ctx context.Context, comps []components.Component, i
 		associatedActivities := AssessmentActivities(assessmentSubject, componentActivities)
 		*ruleBasedTask.AssociatedActivities = append(*ruleBasedTask.AssociatedActivities, associatedActivities...)
 
-		// Here we assume the Components are from a corresponding
-		// SSP making them locally defined.
 		if options.importSSP == models.SampleRequiredString {
+			// In this use case, there is no linked SSP, making specified Components
+			// locally defined.
 			localComponents = append(localComponents, comp)
 		}
 	}
 
 	assessmentAssets := AssessmentAssets(comps)
-	taskAssessmentSubject := oscalTypes.AssessmentSubject{
-		IncludeSubjects: &subjectSelectors,
-		Type:            defaultSubjectType,
-	}
-	*ruleBasedTask.Subjects = append(*ruleBasedTask.Subjects, taskAssessmentSubject)
+	*ruleBasedTask.Subjects = append(*ruleBasedTask.Subjects, oscalTypes.AssessmentSubject{IncludeSubjects: &subjectSelectors})
 
 	metadata := models.NewSampleMetadata()
 	metadata.Title = options.title
@@ -151,7 +147,7 @@ func newTask() oscalTypes.Task {
 		UUID:                 uuid.NewUUID(),
 		Title:                "Automated Assessment",
 		Type:                 defaultTaskType,
-		Description:          "Evaluation of defined rules for components.",
+		Description:          "Evaluation of defined rules for applicable comps.",
 		Subjects:             &[]oscalTypes.AssessmentSubject{},
 		AssociatedActivities: &[]oscalTypes.AssociatedActivity{},
 	}
@@ -296,12 +292,20 @@ func AssessmentAssets(comps []components.Component) oscalTypes.AssessmentAssets 
 
 		}
 	}
+
 	// AssessmentPlatforms is a required field under AssessmentAssets
 	assessmentPlatform := oscalTypes.AssessmentPlatform{
-		UUID:           uuid.NewUUID(),
-		Title:          models.SampleRequiredString,
-		UsesComponents: &usedComponents,
+		UUID:  uuid.NewUUID(),
+		Title: models.SampleRequiredString,
 	}
+
+	if len(usedComponents) == 0 {
+		return oscalTypes.AssessmentAssets{
+			AssessmentPlatforms: []oscalTypes.AssessmentPlatform{assessmentPlatform},
+		}
+	}
+
+	assessmentPlatform.UsesComponents = &usedComponents
 	assessmentAssets := oscalTypes.AssessmentAssets{
 		Components:          &systemComponents,
 		AssessmentPlatforms: []oscalTypes.AssessmentPlatform{assessmentPlatform},
