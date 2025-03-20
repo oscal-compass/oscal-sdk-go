@@ -58,7 +58,7 @@ func SSPToAssessmentPlan(ctx context.Context, ssp oscalTypes.SystemSecurityPlan,
 	implementationSettings := settings.NewImplementationSettings(implementationAdapter)
 
 	if implementationSettings == nil {
-		return nil, fmt.Errorf("cannot transform ssp for at path %s", sspImportPath)
+		return nil, fmt.Errorf("cannot transform ssp at path %s", sspImportPath)
 	}
 
 	return plans.GenerateAssessmentPlan(ctx, allComponents, *implementationSettings, plans.WithImport(sspImportPath))
