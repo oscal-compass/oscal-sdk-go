@@ -4,5 +4,5 @@
 */
 
 // Package components defines logic for working with different defined OSCAL component types.
-// This provides a generic implementations of Components and associated Control Implementations.
+// This provides a generic implementation of Components and associated Control Implementations.
 package components
