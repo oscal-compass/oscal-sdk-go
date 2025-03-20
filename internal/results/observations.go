@@ -19,7 +19,7 @@ type observationsManager struct {
 	actorsByCheck       map[string]string
 }
 
-// newObservationManager create an observationManager struct loaded with
+// newObservationManager creates an observationManager struct loaded with
 // actor information from the Assessment Plan Assessment Assets.
 func newObservationManager(plan oscalTypes.AssessmentPlan) *observationsManager {
 	// Index validation components to set the Actor information
