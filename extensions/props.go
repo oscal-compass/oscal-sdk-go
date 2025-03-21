@@ -8,7 +8,7 @@ package extensions
 import (
 	"strings"
 
-	oscalTypes "github.com/defenseunicorns/go-oscal/src/types/oscal-1-1-2"
+	oscalTypes "github.com/defenseunicorns/go-oscal/src/types/oscal-1-1-3"
 )
 
 // TrestleNameSpace is the generic namespace for trestle-defined property extensions.

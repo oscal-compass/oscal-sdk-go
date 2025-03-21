@@ -6,7 +6,7 @@
 package components
 
 import (
-	oscalTypes "github.com/defenseunicorns/go-oscal/src/types/oscal-1-1-2"
+	oscalTypes "github.com/defenseunicorns/go-oscal/src/types/oscal-1-1-3"
 )
 
 // ComponentConverter defines methods to convert and/or retrieve OSCAL Component underlying types.
@@ -33,7 +33,7 @@ type Component interface {
 }
 
 // ComponentType represents valid types of Components in OSCAL.
-// Reference: https://pages.nist.gov/OSCAL-Reference/models/v1.1.2/assessment-plan/json-reference/#/assessment-plan/local-definitions/components/type
+// Reference: https://pages.nist.gov/OSCAL-Reference/models/v1.1.3/assessment-plan/json-reference/#/assessment-plan/local-definitions/components/type
 type ComponentType string
 
 const (
