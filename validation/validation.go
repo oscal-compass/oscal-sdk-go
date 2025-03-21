@@ -10,7 +10,7 @@ package validation
 import (
 	"fmt"
 
-	oscalTypes "github.com/defenseunicorns/go-oscal/src/types/oscal-1-1-2"
+	oscalTypes "github.com/defenseunicorns/go-oscal/src/types/oscal-1-1-3"
 )
 
 // Validator defines methods for semantic validation on a decoded OSCAL models.

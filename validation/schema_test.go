@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	oscalTypes "github.com/defenseunicorns/go-oscal/src/types/oscal-1-1-2"
+	oscalTypes "github.com/defenseunicorns/go-oscal/src/types/oscal-1-1-3"
 	"github.com/stretchr/testify/require"
 )
 
@@ -25,7 +25,7 @@ func TestNewSchemaValidator(t *testing.T) {
 			modelData: oscalTypes.OscalModels{
 				ComponentDefinition: &oscalTypes.ComponentDefinition{
 					Metadata: oscalTypes.Metadata{
-						OscalVersion: "1.1.2",
+						OscalVersion: "1.1.3",
 						Version:      "0.1.0",
 						LastModified: time.Now(),
 					},
@@ -40,7 +40,7 @@ func TestNewSchemaValidator(t *testing.T) {
 				Catalog: &oscalTypes.Catalog{
 					UUID: "not-a-uuid",
 					Metadata: oscalTypes.Metadata{
-						OscalVersion: "1.1.2",
+						OscalVersion: "1.1.3",
 						Version:      "0.1.0",
 						LastModified: time.Now(),
 					},

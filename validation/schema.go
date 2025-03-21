@@ -7,13 +7,13 @@ package validation
 
 import (
 	oscalValidation "github.com/defenseunicorns/go-oscal/src/pkg/validation"
-	oscalTypes "github.com/defenseunicorns/go-oscal/src/types/oscal-1-1-2"
+	oscalTypes "github.com/defenseunicorns/go-oscal/src/types/oscal-1-1-3"
 )
 
 var _ Validator = (*SchemaValidator)(nil)
 
 // OSCALVersion is the default version of OSCAL supported.
-const OSCALVersion = "1.1.2"
+const OSCALVersion = "1.1.3"
 
 /*
 SchemaValidator implementation a validation.Validator and
