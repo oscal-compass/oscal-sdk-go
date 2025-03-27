@@ -27,19 +27,19 @@
             "remarks": "rule_set_00"
           },
           {
-            "name": "Parameter_Id",
+            "name": "Parameter_Id_1",
             "ns": "https://oscal-compass.github.io/compliance-trestle/schemas/oscal/cd",
             "value": "file_name",
             "remarks": "rule_set_00"
           },
           {
-            "name": "Parameter_Description",
+            "name": "Parameter_Description_1",
             "ns": "https://oscal-compass.github.io/compliance-trestle/schemas/oscal/cd",
             "value": "A parameter for a file name",
             "remarks": "rule_set_00"
           },
           {
-            "name": "Parameter_Value_Default",
+            "name": "Parameter_Value_Default_1",
             "ns": "https://oscal-compass.github.io/compliance-trestle/schemas/oscal/cd",
             "value": "A default value",
             "remarks": "rule_set_00"
