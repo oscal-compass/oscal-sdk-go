@@ -13,6 +13,7 @@ import (
 	oscalTypes "github.com/defenseunicorns/go-oscal/src/types/oscal-1-1-3"
 
 	"github.com/oscal-compass/oscal-sdk-go/extensions"
+	"github.com/oscal-compass/oscal-sdk-go/models/components"
 )
 
 // GetFrameworkShortName returns the human-readable short name for the control source in a
@@ -52,11 +53,12 @@ func Framework(framework string, controlImplementations []oscalTypes.ControlImpl
 
 	for _, controlImplementation := range controlImplementations {
 		frameworkShortName, found := GetFrameworkShortName(controlImplementation)
+		implementationAdapter := components.NewControlImplementationSetAdapter(controlImplementation)
 		if found && frameworkShortName == framework {
 			if implementationSettings == nil {
-				implementationSettings = NewImplementationSettings(controlImplementation)
+				implementationSettings = NewImplementationSettings(implementationAdapter)
 			} else {
-				implementationSettings.merge(controlImplementation)
+				implementationSettings.merge(implementationAdapter)
 			}
 		}
 	}

@@ -16,6 +16,7 @@ import (
 	"github.com/oscal-compass/oscal-sdk-go/extensions"
 	"github.com/oscal-compass/oscal-sdk-go/internal/set"
 	"github.com/oscal-compass/oscal-sdk-go/models"
+	"github.com/oscal-compass/oscal-sdk-go/models/components"
 	"github.com/oscal-compass/oscal-sdk-go/validation"
 )
 
@@ -234,7 +235,8 @@ func TestMerge(t *testing.T) {
 	for _, c := range tests {
 		t.Run(c.name, func(t *testing.T) {
 			testSettings := prepSettings(t)
-			testSettings.merge(c.inputImplementation)
+			adapter := components.NewControlImplementationSetAdapter(c.inputImplementation)
+			testSettings.merge(adapter)
 			require.Equal(t, c.wantSettings, *testSettings)
 		})
 	}
