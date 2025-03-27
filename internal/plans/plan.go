@@ -107,19 +107,19 @@ func GenerateAssessmentPlan(ctx context.Context, comps []components.Component, i
 		associatedActivities := AssessmentActivities(assessmentSubject, componentActivities)
 		*ruleBasedTask.AssociatedActivities = append(*ruleBasedTask.AssociatedActivities, associatedActivities...)
 
-		// Here we assume the Components are from a corresponding
-		// SSP making them locally defined.
 		if options.importSSP == models.SampleRequiredString {
+			// In this use case, there is no linked SSP, making specified Components
+			// locally defined.
 			localComponents = append(localComponents, comp)
 		}
 	}
 
 	assessmentAssets := AssessmentAssets(comps)
-	taskAssessmentSubject := oscalTypes.AssessmentSubject{
+	taskSubjects := oscalTypes.AssessmentSubject{
 		IncludeSubjects: &subjectSelectors,
 		Type:            defaultSubjectType,
 	}
-	*ruleBasedTask.Subjects = append(*ruleBasedTask.Subjects, taskAssessmentSubject)
+	*ruleBasedTask.Subjects = append(*ruleBasedTask.Subjects, taskSubjects)
 
 	metadata := models.NewSampleMetadata()
 	metadata.Title = options.title
@@ -198,7 +198,7 @@ func ActivitiesForComponent(ctx context.Context, targetComponentID string, store
 			Props:           &[]oscalTypes.Property{methodProp},
 			RelatedControls: &relatedControls,
 			Title:           rule.Rule.ID,
-			Steps:           &steps,
+			Steps:           models.NilIfEmpty(&steps),
 		}
 
 		if rule.Rule.Parameter != nil {
@@ -296,12 +296,14 @@ func AssessmentAssets(comps []components.Component) oscalTypes.AssessmentAssets 
 
 		}
 	}
+
 	// AssessmentPlatforms is a required field under AssessmentAssets
 	assessmentPlatform := oscalTypes.AssessmentPlatform{
 		UUID:           uuid.NewUUID(),
 		Title:          models.SampleRequiredString,
-		UsesComponents: &usedComponents,
+		UsesComponents: models.NilIfEmpty(&usedComponents),
 	}
+
 	assessmentAssets := oscalTypes.AssessmentAssets{
 		Components:          &systemComponents,
 		AssessmentPlatforms: []oscalTypes.AssessmentPlatform{assessmentPlatform},
