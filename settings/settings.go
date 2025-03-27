@@ -29,12 +29,14 @@ type Settings struct {
 // is returned.
 // The parameter value is not altered on the original rule set, it is copied and returned with the new rule set.
 func (i Settings) ApplyParameterSettings(set extensions.RuleSet) extensions.RuleSet {
-	if len(i.selectedParameters) > 0 && set.Rule.Parameter != nil {
-		selectedValue, ok := i.selectedParameters[set.Rule.Parameter.ID]
-		if ok {
-			parameterCopy := *set.Rule.Parameter
-			parameterCopy.Value = selectedValue
-			set.Rule.Parameter = &parameterCopy
+	if len(i.selectedParameters) > 0 && set.Rule.Parameters != nil {
+		for idx, ruleParam := range *set.Rule.Parameters {
+			selectedValue, ok := i.selectedParameters[ruleParam.ID]
+			if ok {
+				parameterCopy := ruleParam
+				parameterCopy.Value = selectedValue
+				(*set.Rule.Parameters)[idx] = parameterCopy
+			}
 		}
 	}
 	return set

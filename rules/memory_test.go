@@ -36,10 +36,10 @@ var (
 		Rule: extensions.Rule{
 			ID:          "etcd_key_file",
 			Description: "Ensure that the --key-file argument is set as appropriate",
-			Parameter: &extensions.Parameter{
+			Parameters: &[]extensions.Parameter{{
 				ID:          "file_name",
 				Description: "A parameter for a file name",
-			},
+			}},
 		},
 		Checks: []extensions.Check{
 			{
