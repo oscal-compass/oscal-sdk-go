@@ -9,6 +9,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"regexp"
 	"strings"
 
 	"github.com/oscal-compass/oscal-sdk-go/models/components"
@@ -130,26 +131,27 @@ func (m *MemoryStore) indexComponent(component components.Component) (set.Set[st
 
 		// paramMap stores a map of parameters to their suffix value
 		// of the property name.  Multiple properties contain
-		// data needed to populate each parameter.  As the loop
-		// below iterates over the properties the map of
-		// parameters stored in the map are populated.
+		// values needed to populate each parameter.  As the loop
+		// iterates over the properties the parameters stored
+		// in the map are populated.
 		paramMap := make(map[string]extensions.Parameter)
 
 		for prop := range propSet {
-
-			// Split the property name to handle parameters that have
-			// a numerical suffix.  e.g Parameter_Id_1
-			// If the property name contains "Parameter" and has a suffix then
-			// extract the suffix as the key for the map.  Otherwise default
-			// to using "0" as the key (meaning there is only one parameter
-			// contained in the properties).
 			var propName string
 			var propSuffix string
-			propNameParts := strings.Split(prop.Name, "_")
 
-			if len(propNameParts) > 2 && strings.HasPrefix("Parameter", prop.Name) {
+			// Matches any parameter properties that have a numerical suffix
+			re := regexp.MustCompile(`^Parameter_.*\d+$`)
+			// If the property name contains "Parameter" and has a numerical
+			// suffix then extract the suffix as the key for the map.
+			// Otherwise default to using "0" as the key (meaning there is
+			// no numerical suffix and only one parameter contained
+			// in the properties).
+			if re.MatchString(prop.Name) {
+				// Split the property name to handle properties that have
+				// a numerical suffix.  e.g Parameter_Id_1
+				propNameParts := strings.Split(prop.Name, "_")
 				propPrefix := propNameParts[:len(propNameParts)-1]
-
 				propName = strings.Join(propPrefix, "_")
 				propSuffix = propNameParts[len(propNameParts)-1]
 			} else {
@@ -217,7 +219,6 @@ func (m *MemoryStore) indexComponent(component components.Component) (set.Set[st
 		}
 		rules.Add(ruleSet.Rule.ID)
 		m.nodes[ruleSet.Rule.ID] = ruleSet
-
 	}
 	return rules, checks
 }

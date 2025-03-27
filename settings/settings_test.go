@@ -74,7 +74,6 @@ func TestApplyToComponents(t *testing.T) {
 			postValidationFunc: func(store rules.Store) bool {
 				ruleSet, _ := store.GetByRuleID(context.TODO(), "testRule1")
 				ruleSetParams := *ruleSet.Rule.Parameters
-				fmt.Println(ruleSetParams[0].Value)
 				return ruleSet.Rule.Parameters != nil && ruleSetParams[0].Value == "updatedValue"
 			},
 		},

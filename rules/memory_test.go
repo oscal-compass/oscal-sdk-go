@@ -36,10 +36,13 @@ var (
 		Rule: extensions.Rule{
 			ID:          "etcd_key_file",
 			Description: "Ensure that the --key-file argument is set as appropriate",
-			Parameters: &[]extensions.Parameter{{
-				ID:          "file_name",
-				Description: "A parameter for a file name",
-			}},
+			Parameters: &[]extensions.Parameter{
+				{
+					ID:          "file_name",
+					Description: "A parameter for a file name",
+					Value:       "A default value",
+				},
+			},
 		},
 		Checks: []extensions.Check{
 			{
@@ -61,8 +64,15 @@ func TestMemoryStore_IndexAll(t *testing.T) {
 			name:         "Valid/WithRules",
 			testDataPath: "../testdata/component-definition-test.json",
 			wantNodes: map[string]extensions.RuleSet{
-				"etcd_key_file": expectedKeyFileRule,
-
+				"etcd_key_file":  expectedKeyFileRule,
+				"etcd_cert_file": expectedCertFileRule,
+			},
+		},
+		{
+			name:         "Valid/WithRulesMultiParams",
+			testDataPath: "../testdata/component-definition-test-multi-param.json",
+			wantNodes: map[string]extensions.RuleSet{
+				"etcd_key_file":  expectedKeyFileRule,
 				"etcd_cert_file": expectedCertFileRule,
 			},
 		},
