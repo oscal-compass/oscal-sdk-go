@@ -202,7 +202,7 @@ func ActivitiesForComponent(ctx context.Context, targetComponentID string, store
 		}
 
 		if rule.Rule.Parameters != nil {
-			for _, rp := range *rule.Rule.Parameters {
+			for _, rp := range rule.Rule.Parameters {
 				parameterProp := oscalTypes.Property{
 					Name:  rp.ID,
 					Value: rp.Value,

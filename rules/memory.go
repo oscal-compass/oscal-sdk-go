@@ -206,9 +206,9 @@ func (m *MemoryStore) indexComponent(component components.Component) (set.Set[st
 		// properties to the rule
 		if len(paramMap) > 0 {
 			ruleParams := make([]extensions.Parameter, 0)
-			ruleSet.Rule.Parameters = &ruleParams
+			ruleSet.Rule.Parameters = ruleParams
 			for _, param := range paramMap {
-				*ruleSet.Rule.Parameters = append(*ruleSet.Rule.Parameters, param)
+				ruleSet.Rule.Parameters = append(ruleSet.Rule.Parameters, param)
 			}
 		}
 

@@ -22,7 +22,7 @@ type Rule struct {
 	// Description defines description of what the rule does.
 	Description string
 	// Parameters are optional information for tuning rule logic.
-	Parameters *[]Parameter
+	Parameters []Parameter
 }
 
 // Check defines a single concrete implementation of a Rule.
