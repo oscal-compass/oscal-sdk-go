@@ -5,7 +5,7 @@ header:
   url: https://github.com/oscal-compass/oscal-sdk-go/blob/main/.github/security-insights.yml
   project-si-source: https://raw.githubusercontent.com/oscal-compass/.github/refs/heads/main/.github/security-insights.yml
   comment: |
-    This file contains only the repository information for the Trestle project.
+    This file contains only the repository information for the OSCAL SDK Go project.
 
 repository:
   url: https://github.com/oscal-compass/oscal-sdk-go
