@@ -201,16 +201,14 @@ func ActivitiesForComponent(ctx context.Context, targetComponentID string, store
 			Steps:           &steps,
 		}
 
-		if rule.Rule.Parameters != nil {
-			for _, rp := range rule.Rule.Parameters {
-				parameterProp := oscalTypes.Property{
-					Name:  rp.ID,
-					Value: rp.Value,
-					Ns:    extensions.TrestleNameSpace,
-					Class: extensions.TestParameterClass,
-				}
-				*activity.Props = append(*activity.Props, parameterProp)
+		for _, rp := range rule.Rule.Parameters {
+			parameterProp := oscalTypes.Property{
+				Name:  rp.ID,
+				Value: rp.Value,
+				Ns:    extensions.TrestleNameSpace,
+				Class: extensions.TestParameterClass,
 			}
+			*activity.Props = append(*activity.Props, parameterProp)
 		}
 		activities = append(activities, activity)
 	}
