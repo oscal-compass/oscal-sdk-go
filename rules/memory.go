@@ -9,6 +9,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"regexp"
+	"strings"
 
 	"github.com/oscal-compass/oscal-sdk-go/models/components"
 
@@ -127,32 +129,86 @@ func (m *MemoryStore) indexComponent(component components.Component) (set.Set[st
 		// component.Type().
 		placeholderCheck := extensions.Check{}
 
+		// paramMap stores a map of parameters to their suffix value
+		// of the property name.  Multiple properties contain
+		// values needed to populate each parameter.  As the loop
+		// iterates over the properties the parameters stored
+		// in the map are populated.
+		paramMap := make(map[string]extensions.Parameter)
+
 		for prop := range propSet {
-			switch prop.Name {
+			var propName string
+			var propSuffix string
+
+			// Matches any parameter properties that have a numerical suffix
+			re := regexp.MustCompile(`^Parameter_.*\d+$`)
+			// If the property name contains "Parameter" and has a numerical
+			// suffix then extract the suffix as the key for the map.
+			// Otherwise default to using "0" as the key (meaning there is
+			// no numerical suffix and only one parameter contained
+			// in the properties).
+			if re.MatchString(prop.Name) {
+				// Split the property name to handle properties that have
+				// a numerical suffix.  e.g Parameter_Id_1
+				propNameParts := strings.Split(prop.Name, "_")
+				propPrefix := propNameParts[:len(propNameParts)-1]
+				propName = strings.Join(propPrefix, "_")
+				propSuffix = propNameParts[len(propNameParts)-1]
+			} else {
+				propName = prop.Name
+				propSuffix = "0" // Used if property does not have numerical suffix
+			}
+
+			switch propName {
 			case extensions.RuleIdProp:
 				ruleSet.Rule.ID = prop.Value
 			case extensions.RuleDescriptionProp:
 				ruleSet.Rule.Description = prop.Value
-			case extensions.ParameterIdProp:
-				if ruleSet.Rule.Parameter == nil {
-					ruleSet.Rule.Parameter = &extensions.Parameter{}
-				}
-				ruleSet.Rule.Parameter.ID = prop.Value
-			case extensions.ParameterDescriptionProp:
-				if ruleSet.Rule.Parameter == nil {
-					ruleSet.Rule.Parameter = &extensions.Parameter{}
-				}
-				ruleSet.Rule.Parameter.Description = prop.Value
-
-			case extensions.ParameterDefaultProp:
-				if ruleSet.Rule.Parameter == nil {
-					ruleSet.Rule.Parameter = &extensions.Parameter{}
-				}
-				ruleSet.Rule.Parameter.Value = prop.Value
 			case extensions.CheckIdProp:
 				placeholderCheck.ID = prop.Value
 			case extensions.CheckDescriptionProp:
 				placeholderCheck.Description = prop.Value
+			case extensions.ParameterIdProp:
+				p, ok := paramMap[propSuffix]
+				if !ok {
+					paramMap[propSuffix] = extensions.Parameter{
+						ID: prop.Value,
+					}
+				} else {
+					p.ID = prop.Value
+					paramMap[propSuffix] = p
+				}
+			case extensions.ParameterDescriptionProp:
+				p, ok := paramMap[propSuffix]
+				if !ok {
+					paramMap[propSuffix] = extensions.Parameter{
+						Description: prop.Value,
+					}
+				} else {
+					p.Description = prop.Value
+					paramMap[propSuffix] = p
+				}
+			case extensions.ParameterDefaultProp:
+				p, ok := paramMap[propSuffix]
+
+				if !ok {
+					paramMap[propSuffix] = extensions.Parameter{
+						Value: prop.Value,
+					}
+				} else {
+					p.Value = prop.Value
+					paramMap[propSuffix] = p
+				}
+			}
+		}
+
+		// Add any parameters that were extracted from the
+		// properties to the rule
+		if len(paramMap) > 0 {
+			ruleParams := make([]extensions.Parameter, 0, len(paramMap))
+			ruleSet.Rule.Parameters = ruleParams
+			for _, param := range paramMap {
+				ruleSet.Rule.Parameters = append(ruleSet.Rule.Parameters, param)
 			}
 		}
 
@@ -164,7 +220,6 @@ func (m *MemoryStore) indexComponent(component components.Component) (set.Set[st
 		rules.Add(ruleSet.Rule.ID)
 		m.nodes[ruleSet.Rule.ID] = ruleSet
 	}
-
 	return rules, checks
 }
 

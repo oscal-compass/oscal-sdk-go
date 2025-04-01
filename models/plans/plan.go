@@ -201,10 +201,10 @@ func ActivitiesForComponent(ctx context.Context, targetComponentID string, store
 			Steps:           &steps,
 		}
 
-		if rule.Rule.Parameter != nil {
+		for _, rp := range rule.Rule.Parameters {
 			parameterProp := oscalTypes.Property{
-				Name:  rule.Rule.Parameter.ID,
-				Value: rule.Rule.Parameter.Value,
+				Name:  rp.ID,
+				Value: rp.Value,
 				Ns:    extensions.TrestleNameSpace,
 				Class: extensions.TestParameterClass,
 			}

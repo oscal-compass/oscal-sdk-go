@@ -56,11 +56,11 @@ func TestApplyToComponents(t *testing.T) {
 					Rule: extensions.Rule{
 						ID:          "testRule1",
 						Description: "Test Rule",
-						Parameter: &extensions.Parameter{
+						Parameters: []extensions.Parameter{{
 							ID:          "testParam1",
 							Description: "Test Parameter",
 							Value:       "updatedValue",
-						},
+						}},
 					},
 					Checks: []extensions.Check{
 						{
@@ -73,7 +73,7 @@ func TestApplyToComponents(t *testing.T) {
 			},
 			postValidationFunc: func(store rules.Store) bool {
 				ruleSet, _ := store.GetByRuleID(context.TODO(), "testRule1")
-				return ruleSet.Rule.Parameter != nil && ruleSet.Rule.Parameter.Value == ""
+				return ruleSet.Rule.Parameters != nil && ruleSet.Rule.Parameters[0].Value == "updatedValue"
 			},
 		},
 		{
@@ -117,10 +117,10 @@ var (
 		Rule: extensions.Rule{
 			ID:          "testRule1",
 			Description: "Test Rule",
-			Parameter: &extensions.Parameter{
+			Parameters: []extensions.Parameter{{
 				ID:          "testParam1",
 				Description: "Test Parameter",
-			},
+			}},
 		},
 		Checks: []extensions.Check{
 			{
@@ -145,11 +145,11 @@ var (
 		Rule: extensions.Rule{
 			ID:          "testRule3",
 			Description: "Test Rule",
-			Parameter: &extensions.Parameter{
+			Parameters: []extensions.Parameter{{
 				ID:          "testParam3",
 				Description: "Test Parameter",
 				Value:       "default",
-			},
+			}},
 		},
 		Checks: []extensions.Check{
 			{
