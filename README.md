@@ -17,7 +17,7 @@ Below is a table to show what is currently supported by the SDK.
 | OSCAL Types with Basic Trestle Extensions | :heavy_check_mark: |
 | OSCAL Schema Validation                   | :heavy_check_mark: |
 | Target Components Extension               | :x:                |
-| Multiple Parameters per Rule              | :x:                |
+| Multiple Parameters per Rule              | :heavy_check_mark: |
 | OSCAL to OSCAL Transformation             | :heavy_check_mark: |
 | OSCAL Constraints Validation              | :x:                |
 
