@@ -1,0 +1,36 @@
+header:
+  schema-version: 2.0.0
+  last-updated: '2025-04-01'
+  last-reviewed: '2025-04-01'
+  url: https://github.com/oscal-compass/oscal-sdk-go/blob/main/.github/security-insights.yml
+  project-si-source: https://raw.githubusercontent.com/oscal-compass/.github/refs/heads/main/.github/security-insights.yml
+  comment: |
+    This file contains only the repository information for the OSCAL SDK Go project.
+
+repository:
+  url: https://github.com/oscal-compass/oscal-sdk-go
+  status: active
+  bug-fixes-only: false
+  accepts-change-request: true
+  accepts-automated-change-request: true
+  no-third-party-packages: false
+  # From the MAINTAINER.md file
+  core-team:
+  - name:        Jennifer Power
+    primary:     true
+  documentation:
+    contributing-guide: https://github.com/oscal-compass/oscal-sdk-go/blob/main/CONTRIBUTING.md
+    security-policy: https://github.com/oscal-compass/community/blob/main/SECURITY.md
+  license:
+    url: https://github.com/oscal-compass/oscal-sdk-go/blob/main/LICENSE
+    expression: Apache-2.0
+  release:
+    automated-pipeline: false
+    distribution-points:
+      - uri: https://github.com/oscal-compass/oscal-sdk-go/releases
+        comment: GitHub Release Page
+  security:
+    assessments:
+      self:
+        comment: |
+          Self assessment has not yet been completed.
