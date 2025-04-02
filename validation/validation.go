@@ -8,6 +8,7 @@
 package validation
 
 import (
+	"errors"
 	"fmt"
 
 	oscalTypes "github.com/defenseunicorns/go-oscal/src/types/oscal-1-1-3"
@@ -42,4 +43,28 @@ type NoopValidator struct{}
 
 func (n NoopValidator) Validate(_ oscalTypes.OscalModels) error {
 	return nil
+}
+
+// ValidatorFunc implements the Validator interface
+type ValidatorFunc func(models oscalTypes.OscalModels) error
+
+func (f ValidatorFunc) Validate(models oscalTypes.OscalModels) error {
+	return f(models)
+}
+
+// ValidateAll returns a func that will run multiple validators in sequence.
+func ValidateAll(validators ...Validator) ValidatorFunc {
+	return func(models oscalTypes.OscalModels) error {
+		var valErrors []error
+		for _, v := range validators {
+			err := v.Validate(models)
+			if err != nil {
+				valErrors = append(valErrors, err)
+			}
+		}
+		if len(valErrors) > 0 {
+			return errors.Join(valErrors...)
+		}
+		return nil
+	}
 }
