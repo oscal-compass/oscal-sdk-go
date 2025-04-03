@@ -73,7 +73,9 @@ func TestApplyToComponents(t *testing.T) {
 			},
 			postValidationFunc: func(store rules.Store) bool {
 				ruleSet, _ := store.GetByRuleID(context.TODO(), "testRule1")
-				return ruleSet.Rule.Parameters != nil && ruleSet.Rule.Parameters[0].Value == "updatedValue"
+				// Ensure that the original indexed rule was not altered by the application
+				// of framework specific params
+				return ruleSet.Rule.Parameters != nil && ruleSet.Rule.Parameters[0].Value == ""
 			},
 		},
 		{
