@@ -31,7 +31,7 @@ func TestDefinedComponentAdapter(t *testing.T) {
 	require.Equal(t, "TestKubernetes", adapter.Title())
 	require.Equal(t, Service, adapter.Type())
 	require.Equal(t, "c8106bc8-5174-4e86-91a4-52f2fe0ed027", adapter.UUID())
-	require.Len(t, adapter.Props(), 6)
+	require.Len(t, adapter.Props(), 7)
 	systemComp, ok := adapter.AsSystemComponent()
 	require.True(t, ok)
 	require.Equal(t, adapter.UUID(), systemComp.UUID)
