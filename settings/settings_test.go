@@ -73,7 +73,9 @@ func TestApplyToComponents(t *testing.T) {
 			},
 			postValidationFunc: func(store rules.Store) bool {
 				ruleSet, _ := store.GetByRuleID(context.TODO(), "testRule1")
-				return ruleSet.Rule.Parameters != nil && ruleSet.Rule.Parameters[0].Value == "updatedValue"
+				// Ensure that the original indexed rule was not altered by the application
+				// of framework specific params
+				return ruleSet.Rule.Parameters != nil && ruleSet.Rule.Parameters[0].Value == ""
 			},
 		},
 		{
@@ -84,7 +86,7 @@ func TestApplyToComponents(t *testing.T) {
 					"doesnotexists": struct{}{},
 				},
 			},
-			expError: "no rules found with criteria for component testComponent1",
+			expError: "component testComponent1: no rules found with criteria",
 		},
 	}
 

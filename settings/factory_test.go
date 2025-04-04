@@ -13,6 +13,7 @@ import (
 
 	"github.com/oscal-compass/oscal-sdk-go/extensions"
 	"github.com/oscal-compass/oscal-sdk-go/internal/set"
+	"github.com/oscal-compass/oscal-sdk-go/models/components"
 )
 
 func TestSettingsFromImplementedRequirements(t *testing.T) {
@@ -109,7 +110,8 @@ func TestSettingsFromImplementedRequirements(t *testing.T) {
 
 	for _, c := range tests {
 		t.Run(c.name, func(t *testing.T) {
-			gotSettings := settingsFromImplementedRequirement(c.inputRequirement)
+			adapter := components.NewImplementedRequirementImplementationAdapter(c.inputRequirement)
+			gotSettings := settingsFromImplementedRequirement(adapter)
 			require.Equal(t, c.wantSettings, gotSettings)
 		})
 	}

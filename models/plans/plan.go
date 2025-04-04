@@ -115,11 +115,11 @@ func GenerateAssessmentPlan(ctx context.Context, comps []components.Component, i
 	}
 
 	assessmentAssets := AssessmentAssets(comps)
-	taskAssessmentSubject := oscalTypes.AssessmentSubject{
+	taskSubjects := oscalTypes.AssessmentSubject{
 		IncludeSubjects: &subjectSelectors,
 		Type:            defaultSubjectType,
 	}
-	*ruleBasedTask.Subjects = append(*ruleBasedTask.Subjects, taskAssessmentSubject)
+	*ruleBasedTask.Subjects = append(*ruleBasedTask.Subjects, taskSubjects)
 
 	metadata := models.NewSampleMetadata()
 	metadata.Title = options.title
@@ -198,7 +198,7 @@ func ActivitiesForComponent(ctx context.Context, targetComponentID string, store
 			Props:           &[]oscalTypes.Property{methodProp},
 			RelatedControls: &relatedControls,
 			Title:           rule.Rule.ID,
-			Steps:           &steps,
+			Steps:           models.NilIfEmpty(&steps),
 		}
 
 		for _, rp := range rule.Rule.Parameters {
@@ -296,12 +296,14 @@ func AssessmentAssets(comps []components.Component) oscalTypes.AssessmentAssets 
 
 		}
 	}
+
 	// AssessmentPlatforms is a required field under AssessmentAssets
 	assessmentPlatform := oscalTypes.AssessmentPlatform{
 		UUID:           uuid.NewUUID(),
 		Title:          models.SampleRequiredString,
-		UsesComponents: &usedComponents,
+		UsesComponents: models.NilIfEmpty(&usedComponents),
 	}
+
 	assessmentAssets := oscalTypes.AssessmentAssets{
 		Components:          &systemComponents,
 		AssessmentPlatforms: []oscalTypes.AssessmentPlatform{assessmentPlatform},

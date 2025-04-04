@@ -86,6 +86,13 @@
                     "ns": "https://oscal-compass.github.io/compliance-trestle/schemas/oscal/cd",
                     "value": "etcd_key_file"
                   }
+                ],
+                "statements": [
+                  {
+                    "statement-id": "CIS-2.1_smt",
+                    "uuid": "cb9219b1-e51c-4680-abb0-616a43bbfbb2",
+                    "description": ""
+                  }
                 ]
               }
             ]
