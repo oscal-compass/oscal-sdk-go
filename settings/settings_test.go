@@ -86,7 +86,7 @@ func TestApplyToComponents(t *testing.T) {
 					"doesnotexists": struct{}{},
 				},
 			},
-			expError: "no rules found with criteria for component testComponent1",
+			expError: "component testComponent1: no rules found with criteria",
 		},
 	}
 
