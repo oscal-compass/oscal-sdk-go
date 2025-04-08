@@ -88,3 +88,23 @@ func TestSSPToAssessmentPlan(t *testing.T) {
 	}
 	require.NoError(t, validator.Validate(oscalModels))
 }
+
+func TestAssessmentPlanToAssessmentResults(t *testing.T) {
+	testDataPath := filepath.Join("../testdata", "test-ap.json")
+
+	file, err := os.Open(testDataPath)
+	require.NoError(t, err)
+	plan, err := models.NewAssessmentPlan(file, validation.NoopValidator{})
+	require.NoError(t, err)
+	require.NotNil(t, plan)
+
+	results, err := AssessmentPlanToAssessmentResults(*plan, "importPath")
+	require.NoError(t, err)
+
+	// Validate against the schema
+	validator := validation.NewSchemaValidator()
+	oscalModels := oscalTypes.OscalModels{
+		AssessmentResults: results,
+	}
+	require.NoError(t, validator.Validate(oscalModels))
+}

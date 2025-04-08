@@ -6,6 +6,8 @@
 package results
 
 import (
+	"time"
+
 	"github.com/defenseunicorns/go-oscal/src/pkg/uuid"
 	oscalTypes "github.com/defenseunicorns/go-oscal/src/types/oscal-1-1-3"
 
@@ -56,8 +58,9 @@ func (o *observationsManager) createOrGet(checkId string) oscalTypes.Observation
 	}
 
 	emptyObservation := oscalTypes.Observation{
-		UUID:  uuid.NewUUID(),
-		Title: checkId,
+		UUID:      uuid.NewUUID(),
+		Title:     checkId,
+		Collected: time.Now(),
 	}
 	o.updateObservation(&emptyObservation)
 	return emptyObservation
