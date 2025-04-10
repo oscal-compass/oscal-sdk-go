@@ -11,8 +11,9 @@ import (
 
 	oscalTypes "github.com/defenseunicorns/go-oscal/src/types/oscal-1-1-3"
 
+	"github.com/oscal-compass/oscal-sdk-go/internal/plans"
+	"github.com/oscal-compass/oscal-sdk-go/internal/results"
 	"github.com/oscal-compass/oscal-sdk-go/models/components"
-	"github.com/oscal-compass/oscal-sdk-go/models/plans"
 	"github.com/oscal-compass/oscal-sdk-go/settings"
 )
 
@@ -62,4 +63,15 @@ func SSPToAssessmentPlan(ctx context.Context, ssp oscalTypes.SystemSecurityPlan,
 	}
 
 	return plans.GenerateAssessmentPlan(ctx, allComponents, *implementationSettings, plans.WithImport(sspImportPath))
+}
+
+// AssessmentPlanToAssessmentResults transforms the data from an Assessment Plan at a given import location to OSCAL Assessment Results.
+func AssessmentPlanToAssessmentResults(plan oscalTypes.AssessmentPlan, apImportPath string, observations ...oscalTypes.Observation) (*oscalTypes.AssessmentResults, error) {
+	options := []results.GenerateOption{
+		results.WithImport(apImportPath),
+	}
+	if observations != nil {
+		options = append(options, results.WithObservations(observations))
+	}
+	return results.GenerateAssessmentResults(plan, options...)
 }
