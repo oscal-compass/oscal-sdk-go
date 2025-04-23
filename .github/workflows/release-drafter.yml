@@ -1,5 +1,7 @@
 name: Release Drafter
 
+permissions: []
+
 on:
   push:
     branches:
