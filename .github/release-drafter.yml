@@ -1,0 +1,46 @@
+name-template: 'v$RESOLVED_VERSION'
+tag-template: 'v$RESOLVED_VERSION'
+template: |
+  # Changes
+
+  $CHANGES
+
+  **Full Changelog**: https://github.com/$OWNER/$REPOSITORY/compare/$PREVIOUS_TAG...v$RESOLVED_VERSION
+
+categories:
+  - title: 'breaking'
+    label: 'type: breaking'
+  - title: 'feat'
+    label: 'type: feature'
+  - title: 'fix'
+    label: 'type: bug'
+  - title: 'chore'
+    labels:
+      - 'chore'
+      - 'refactor'
+  - title: 'docs'
+    label: 'type: docs'
+  - title: 'ci'
+    label: 'type: ci'
+  - title: 'build'
+    label: 'type: build'
+    collapse-after: 5
+
+version-resolver:
+  major:
+    labels:
+      - 'type: breaking'
+  minor:
+    labels:
+      - 'type: feature'
+  patch:
+    labels:
+      - 'type: bug'
+      - 'type: chore'
+      - 'type: docs'
+      - 'type: build'
+      - 'type: ci'
+      - 'type: security'
+
+exclude-labels:
+  - 'skip-changelog'
