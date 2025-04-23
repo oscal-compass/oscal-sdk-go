@@ -1,6 +1,6 @@
 name: Release Drafter
 
-permissions: []
+permissions: {}
 
 on:
   push:
