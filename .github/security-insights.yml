@@ -25,6 +25,7 @@ repository:
     url: https://github.com/oscal-compass/oscal-sdk-go/blob/main/LICENSE
     expression: Apache-2.0
   release:
+    changelog: https://github.com/oscal-compass/oscal-sdk-go/releases/tag/{version}
     automated-pipeline: false
     distribution-points:
       - uri: https://github.com/oscal-compass/oscal-sdk-go/releases
