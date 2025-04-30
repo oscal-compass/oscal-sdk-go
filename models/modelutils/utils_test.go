@@ -71,14 +71,14 @@ func TestFindValuesByName(t *testing.T) {
 	}
 }
 
-func TestHasNoDuplicateValuesByName(t *testing.T) {
+func TestHasDuplicateValuesByName(t *testing.T) {
 	tests := []struct {
 		expectedValue bool
 		name          string
 		model         oscalTypes.OscalModels
 	}{
 		{
-			expectedValue: true,
+			expectedValue: false,
 			name:          "uuid",
 			model: oscalTypes.OscalModels{
 				ComponentDefinition: &oscalTypes.ComponentDefinition{
@@ -99,7 +99,7 @@ func TestHasNoDuplicateValuesByName(t *testing.T) {
 			},
 		},
 		{
-			expectedValue: false,
+			expectedValue: true,
 			name:          "uuid",
 			model: oscalTypes.OscalModels{
 				ComponentDefinition: &oscalTypes.ComponentDefinition{
