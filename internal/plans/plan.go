@@ -15,6 +15,7 @@ import (
 	"github.com/oscal-compass/oscal-sdk-go/extensions"
 	"github.com/oscal-compass/oscal-sdk-go/models"
 	"github.com/oscal-compass/oscal-sdk-go/models/components"
+	"github.com/oscal-compass/oscal-sdk-go/models/modelutils"
 	"github.com/oscal-compass/oscal-sdk-go/rules"
 	"github.com/oscal-compass/oscal-sdk-go/settings"
 )
@@ -198,7 +199,7 @@ func ActivitiesForComponent(ctx context.Context, targetComponentID string, store
 			Props:           &[]oscalTypes.Property{methodProp},
 			RelatedControls: &relatedControls,
 			Title:           rule.Rule.ID,
-			Steps:           models.NilIfEmpty(&steps),
+			Steps:           modelutils.NilIfEmpty(&steps),
 		}
 
 		for _, rp := range rule.Rule.Parameters {
@@ -301,7 +302,7 @@ func AssessmentAssets(comps []components.Component) oscalTypes.AssessmentAssets 
 	assessmentPlatform := oscalTypes.AssessmentPlatform{
 		UUID:           uuid.NewUUID(),
 		Title:          models.SampleRequiredString,
-		UsesComponents: models.NilIfEmpty(&usedComponents),
+		UsesComponents: modelutils.NilIfEmpty(&usedComponents),
 	}
 
 	assessmentAssets := oscalTypes.AssessmentAssets{

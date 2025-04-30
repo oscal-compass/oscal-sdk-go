@@ -12,8 +12,6 @@ import (
 	"fmt"
 
 	oscalTypes "github.com/defenseunicorns/go-oscal/src/types/oscal-1-1-3"
-
-	models_ "github.com/oscal-compass/oscal-sdk-go/models"
 )
 
 // Validator defines methods for semantic validation on a decoded OSCAL models.
@@ -52,20 +50,6 @@ type ValidatorFunc func(models oscalTypes.OscalModels) error
 
 func (f ValidatorFunc) Validate(models oscalTypes.OscalModels) error {
 	return f(models)
-}
-
-type DuplicatesValidator struct{}
-
-func (d DuplicatesValidator) Validate(model oscalTypes.OscalModels) error {
-	if !models_.HasDuplicateValuesByName(&model, "UUID") {
-		return fmt.Errorf("duplicate UUIDs found")
-	}
-	if model.Profile != nil {
-		if !models_.HasDuplicateValuesByName(&model, "ParamId") {
-			return fmt.Errorf("duplicate ParamIds found")
-		}
-	}
-	return nil
 }
 
 // ValidateAll returns a func that will run multiple validators in sequence.
