@@ -10,6 +10,8 @@ import (
 	"strconv"
 
 	oscalTypes "github.com/defenseunicorns/go-oscal/src/types/oscal-1-1-3"
+
+	"github.com/oscal-compass/oscal-sdk-go/internal/set"
 )
 
 // NilIfEmpty returns nil if the slice is empty, otherwise returns the original slice.
@@ -20,9 +22,10 @@ func NilIfEmpty[T any](slice *[]T) *[]T {
 	return slice
 }
 
+// FindValuesByName returns a slice of values in a model associated with a key at any depth of nesting.
 func FindValuesByName(model *oscalTypes.OscalModels, name string) []string {
 	var results []string
-	seen := make(map[uintptr]bool)
+	seen := set.New[uintptr]()
 	var walk func(val reflect.Value, key string)
 	walk = func(val reflect.Value, key string) {
 		if !val.IsValid() {
@@ -31,10 +34,10 @@ func FindValuesByName(model *oscalTypes.OscalModels, name string) []string {
 		for (val.Kind() == reflect.Ptr || val.Kind() == reflect.Interface) && !val.IsNil() {
 			if val.Kind() == reflect.Ptr {
 				ptr := val.Pointer()
-				if seen[ptr] {
+				if seen.Has(ptr) {
 					return
 				}
-				seen[ptr] = true
+				seen.Add(ptr)
 			}
 			val = val.Elem()
 		}
@@ -74,12 +77,12 @@ func FindValuesByName(model *oscalTypes.OscalModels, name string) []string {
 
 func HasDuplicateValuesByName(model *oscalTypes.OscalModels, name string) bool {
 	values := FindValuesByName(model, name)
-	valueMap := make(map[string]bool)
+	valueSet := set.New[string]()
 	for _, value := range values {
-		if valueMap[value] {
+		if valueSet.Has(value) {
 			return false
 		}
-		valueMap[value] = true
+		valueSet.Add(value)
 	}
 	return true
 }
