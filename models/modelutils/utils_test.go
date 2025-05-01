@@ -78,7 +78,7 @@ func TestHasDuplicateValuesByName(t *testing.T) {
 		model         oscalTypes.OscalModels
 	}{
 		{
-			expectedValue: false,
+			expectedValue: true,
 			name:          "uuid",
 			model: oscalTypes.OscalModels{
 				ComponentDefinition: &oscalTypes.ComponentDefinition{
@@ -99,7 +99,7 @@ func TestHasDuplicateValuesByName(t *testing.T) {
 			},
 		},
 		{
-			expectedValue: true,
+			expectedValue: false,
 			name:          "uuid",
 			model: oscalTypes.OscalModels{
 				ComponentDefinition: &oscalTypes.ComponentDefinition{

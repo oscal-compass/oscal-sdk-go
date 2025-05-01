@@ -75,14 +75,16 @@ func FindValuesByName(model *oscalTypes.OscalModels, name string) []string {
 	return results
 }
 
+// HasDuplicateValuesByName aggregates all nested values of a model associated
+// with a key and returns true if a value appears more than once.
 func HasDuplicateValuesByName(model *oscalTypes.OscalModels, name string) bool {
 	values := FindValuesByName(model, name)
 	valueSet := set.New[string]()
 	for _, value := range values {
 		if valueSet.Has(value) {
-			return false
+			return true
 		}
 		valueSet.Add(value)
 	}
-	return true
+	return false
 }
