@@ -119,6 +119,48 @@ func TestHasDuplicateValuesByName(t *testing.T) {
 				},
 			},
 		},
+		{
+			expectedValue: false,
+			name:          "uuid",
+			model: oscalTypes.OscalModels{
+				ComponentDefinition: &oscalTypes.ComponentDefinition{
+					Metadata: oscalTypes.Metadata{
+						OscalVersion: "1.1.3",
+						Version:      "0.1.0",
+						LastModified: time.Now(),
+					},
+					BackMatter: &oscalTypes.BackMatter{
+						Resources: &[]oscalTypes.Resource{
+							{
+								UUID: "",
+							},
+						},
+					},
+					UUID: "c14d8812-7098-4a9b-8f89-cba41b6ff0d8",
+				},
+			},
+		},
+		{
+			expectedValue: true,
+			name:          "uuid",
+			model: oscalTypes.OscalModels{
+				ComponentDefinition: &oscalTypes.ComponentDefinition{
+					Metadata: oscalTypes.Metadata{
+						OscalVersion: "1.1.3",
+						Version:      "0.1.0",
+						LastModified: time.Now(),
+					},
+					BackMatter: &oscalTypes.BackMatter{
+						Resources: &[]oscalTypes.Resource{
+							{
+								UUID: "",
+							},
+						},
+					},
+					UUID: "",
+				},
+			},
+		},
 	}
 	for _, c := range tests {
 		t.Run(c.name, func(t *testing.T) {
