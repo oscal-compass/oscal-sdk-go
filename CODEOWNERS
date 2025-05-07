@@ -1,0 +1,4 @@
+# CODEOWNERS
+
+# Note: the members of the maintainers group should be kept in sync with MAINTAINERS.md
+* @oscal-compass/oscal-sdk-go-maintainers
