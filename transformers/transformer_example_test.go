@@ -16,7 +16,7 @@ import (
 )
 
 func ExampleComponentDefinitionsToAssessmentPlan() {
-	file, err := os.Open("example-component-definition.json")
+	file, err := os.Open("../testdata/component-definition-test.json")
 	if err != nil {
 		log.Fatalf("failed to open component definition, %v", err)
 	}
@@ -26,14 +26,16 @@ func ExampleComponentDefinitionsToAssessmentPlan() {
 	}
 
 	if definition != nil {
-		assessmentPlan, err := transformers.ComponentDefinitionsToAssessmentPlan(context.Background(), []oscalTypes.ComponentDefinition{*definition}, "example-framework")
+		assessmentPlan, err := transformers.ComponentDefinitionsToAssessmentPlan(context.Background(), []oscalTypes.ComponentDefinition{*definition}, "cis")
 		if err != nil {
 			log.Fatalf("failed to create assessment plan, %v", err)
 		}
-		assessmentPlanJSON, err := json.MarshalIndent(assessmentPlan, "", " ")
+		reviewedControlsJson, err := json.Marshal(assessmentPlan.ReviewedControls)
 		if err != nil {
-			log.Fatalf("failed to marshal assessment plan, %v", err)
+			log.Fatalf("failed to marshal reviewed controls, %v", err)
 		}
-		fmt.Println(string(assessmentPlanJSON))
+		fmt.Println(string(reviewedControlsJson))
 	}
+	// Output:
+	// {"control-selections":[{"include-controls":[{"control-id":"CIS-2.1"}]}]}
 }
