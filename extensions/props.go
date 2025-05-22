@@ -38,6 +38,9 @@ const (
 	// AssessmentRuleIdProp represent the property name for a rule associated to an OSCAL
 	// Observation.
 	AssessmentRuleIdProp = "assessment-rule-id"
+	// AssessmentCheckIdProp represent the property name for a check associated to an OSCAL
+	// Observation.
+	AssessmentCheckIdProp = "assessment-check-id"
 )
 
 type findOptions struct {
