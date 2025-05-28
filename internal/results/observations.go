@@ -52,6 +52,19 @@ func (o *observationsManager) load(observations []oscalTypes.Observation) {
 
 // createOrGet return an existing observation or a newly created one.
 func (o *observationsManager) createOrGet(checkId string) oscalTypes.Observation {
+	for _, observation := range o.observationsByCheck {
+		// Loop through the Props slice to find the AssessmentCheckIdProp
+		if observation.Props == nil {
+			continue
+		}
+		check, found := extensions.GetTrestleProp(extensions.AssessmentCheckIdProp, *observation.Props)
+		if !found || check.Value != checkId {
+			continue
+		} else {
+			return observation
+		}
+	}
+	// Using observation title as a fallback
 	observation, ok := o.observationsByCheck[checkId]
 	if ok {
 		return observation

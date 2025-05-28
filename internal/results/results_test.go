@@ -79,7 +79,7 @@ func TestGenerateAssessmentResults(t *testing.T) {
 			},
 		},
 		{
-			name: "Success/WithObservations",
+			name: "Success/WithObservationsMatchingCheckId",
 			inputOptions: []GenerateOption{
 				WithObservations([]oscalTypes.Observation{
 					{
@@ -89,6 +89,11 @@ func TestGenerateAssessmentResults(t *testing.T) {
 								Name:  extensions.AssessmentRuleIdProp,
 								Ns:    extensions.TrestleNameSpace,
 								Value: "rule-1",
+							},
+							{
+								Name:  extensions.AssessmentCheckIdProp,
+								Ns:    extensions.TrestleNameSpace,
+								Value: "check-1",
 							},
 						},
 					},
@@ -154,6 +159,175 @@ func TestGenerateAssessmentResults(t *testing.T) {
 						},
 					},
 				}
+				require.NotNil(t, observation.Origins)
+				require.Len(t, *observation.Origins, 1)
+				require.Equal(t, expectedOrigins, *observation.Origins)
+			},
+		},
+		{
+			name: "Success/WithObservationsMatchingTitle",
+			inputOptions: []GenerateOption{
+				WithObservations([]oscalTypes.Observation{
+					{
+						Title: "check-1",
+						Props: &[]oscalTypes.Property{
+							{
+								Name:  extensions.AssessmentRuleIdProp,
+								Ns:    extensions.TrestleNameSpace,
+								Value: "rule-1",
+							},
+							{
+								Name:  extensions.AssessmentCheckIdProp,
+								Ns:    extensions.TrestleNameSpace,
+								Value: "check-2",
+							},
+						},
+					},
+				}),
+			},
+			assessmentPlan: defaultAssessmentPlan,
+			assertFunc: func(t *testing.T, results *oscalTypes.AssessmentResults) {
+				require.Len(t, results.Results, 1)
+				result := results.Results[0]
+				require.Equal(t, result.Title, "Result For Task \"Automated Assessment\"")
+				require.Equal(t, result.Description, "OSCAL Assessment Result For Task \"Automated Assessment\"")
+
+				expectedControls := oscalTypes.ReviewedControls{
+					ControlSelections: []oscalTypes.AssessedControls{
+						{
+							IncludeControls: &[]oscalTypes.AssessedControlsSelectControlById{
+								{
+									ControlId: "ex-2",
+								},
+								{
+									ControlId: "ex-1",
+								},
+							},
+						},
+						{
+							IncludeControls: &[]oscalTypes.AssessedControlsSelectControlById{
+								{
+									ControlId: "ex-1",
+								},
+							},
+						},
+					},
+				}
+				require.Equal(t, expectedControls, result.ReviewedControls)
+				require.NotNil(t, result.Observations)
+				require.Len(t, *result.Observations, 1)
+				observations := *result.Observations
+				observation := observations[0]
+
+				expectedOrigins := []oscalTypes.Origin{
+					{
+						Actors: []oscalTypes.OriginActor{
+							{
+								ActorUuid: "701c70f1-482b-42b0-a419-9870158cd9e2",
+								Type:      defaultActor,
+							},
+						},
+						RelatedTasks: &[]oscalTypes.RelatedTask{
+							{
+								TaskUuid: "0733aaa9-9743-4971-967c-bbd951bb9026",
+								Subjects: &[]oscalTypes.AssessmentSubject{
+									{
+										Type: "component",
+										IncludeSubjects: &[]oscalTypes.SelectSubjectById{
+											{
+												SubjectUuid: "4e19131e-b361-4f0e-8262-02bf4456202e",
+												Type:        "component",
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+				}
+				require.NotNil(t, observation.Origins)
+				require.Len(t, *observation.Origins, 1)
+				require.Equal(t, expectedOrigins, *observation.Origins)
+			},
+		},
+		{
+			name: "Success/WithObservationsNoMatching",
+			inputOptions: []GenerateOption{
+				WithObservations([]oscalTypes.Observation{
+					{
+						Title: "check-2",
+						Props: &[]oscalTypes.Property{
+							{
+								Name:  extensions.AssessmentRuleIdProp,
+								Ns:    extensions.TrestleNameSpace,
+								Value: "rule-1",
+							},
+						},
+					},
+				}),
+			},
+			assessmentPlan: defaultAssessmentPlan,
+			assertFunc: func(t *testing.T, results *oscalTypes.AssessmentResults) {
+				require.Len(t, results.Results, 1)
+				result := results.Results[0]
+				require.Equal(t, result.Title, "Result For Task \"Automated Assessment\"")
+				require.Equal(t, result.Description, "OSCAL Assessment Result For Task \"Automated Assessment\"")
+
+				expectedControls := oscalTypes.ReviewedControls{
+					ControlSelections: []oscalTypes.AssessedControls{
+						{
+							IncludeControls: &[]oscalTypes.AssessedControlsSelectControlById{
+								{
+									ControlId: "ex-2",
+								},
+								{
+									ControlId: "ex-1",
+								},
+							},
+						},
+						{
+							IncludeControls: &[]oscalTypes.AssessedControlsSelectControlById{
+								{
+									ControlId: "ex-1",
+								},
+							},
+						},
+					},
+				}
+				require.Equal(t, expectedControls, result.ReviewedControls)
+				require.NotNil(t, result.Observations)
+				require.Len(t, *result.Observations, 1)
+				observations := *result.Observations
+				observation := observations[0]
+				// Created a new observation when no matchings
+				require.Equal(t, observation.Title, "check-1")
+				expectedOrigins := []oscalTypes.Origin{
+					{
+						Actors: []oscalTypes.OriginActor{
+							{
+								ActorUuid: "701c70f1-482b-42b0-a419-9870158cd9e2",
+								Type:      defaultActor,
+							},
+						},
+						RelatedTasks: &[]oscalTypes.RelatedTask{
+							{
+								TaskUuid: "0733aaa9-9743-4971-967c-bbd951bb9026",
+								Subjects: &[]oscalTypes.AssessmentSubject{
+									{
+										Type: "component",
+										IncludeSubjects: &[]oscalTypes.SelectSubjectById{
+											{
+												SubjectUuid: "4e19131e-b361-4f0e-8262-02bf4456202e",
+												Type:        "component",
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+				}
+
 				require.NotNil(t, observation.Origins)
 				require.Len(t, *observation.Origins, 1)
 				require.Equal(t, expectedOrigins, *observation.Origins)
