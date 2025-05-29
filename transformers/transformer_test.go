@@ -46,6 +46,13 @@ func TestComponentDefinitionsToAssessmentPlan(t *testing.T) {
 	require.Contains(t, activities, "etcd_cert_file")
 	require.Contains(t, activities, "etcd_key_file")
 
+	// Backmatter check
+	require.Len(t, *plan.BackMatter.Resources, 1)
+	resources := *plan.BackMatter.Resources
+	require.Equal(t, resources[0].Title, "cis")
+	require.Equal(t, resources[0].Description, "CIS Profile")
+	require.Len(t, *resources[0].Rlinks, 1)
+
 	// Validate against the schema
 	validator := validation.NewSchemaValidator()
 	oscalModels := oscalTypes.OscalModels{
