@@ -272,7 +272,7 @@ func prepSettings(t *testing.T) *ImplementationSettings {
 		}
 		allImplementations = append(allImplementations, *component.ControlImplementations...)
 	}
-	impSettings, err := Framework("cis", allImplementations)
+	impSettings, _, err := ByFramework("cis", allImplementations)
 	require.NoError(t, err)
 	return impSettings
 }
