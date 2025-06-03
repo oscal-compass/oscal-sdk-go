@@ -117,13 +117,13 @@ func TestByFramework(t *testing.T) {
 		},
 	}
 
-	expectedFramwork := FrameworkSource{
+	expectedFramework := FrameworkSource{
 		Title:       "cis",
 		Description: "CIS Profile",
 		Href:        "profiles/cis/profile.json",
 	}
 
-	require.Equal(t, expectedFramwork, framework)
+	require.Equal(t, expectedFramework, framework)
 	require.Equal(t, expectedSettings, implementationsMap)
 
 	_, _, err = ByFramework("doesnotexist", allImplementations)
