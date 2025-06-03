@@ -66,7 +66,7 @@ func TestGetFrameworkShortName(t *testing.T) {
 	}
 }
 
-func TestFramework(t *testing.T) {
+func TestByFramework(t *testing.T) {
 	testDataPath := filepath.Join("../testdata", "component-definition-test-reqs.json")
 	file, err := os.Open(testDataPath)
 	require.NoError(t, err)
@@ -83,7 +83,7 @@ func TestFramework(t *testing.T) {
 		allImplementations = append(allImplementations, *component.ControlImplementations...)
 	}
 
-	implementationsMap, err := Framework("cis", allImplementations)
+	implementationsMap, framework, err := ByFramework("cis", allImplementations)
 	require.NoError(t, err)
 	expectedSettings := &ImplementationSettings{
 		settings: Settings{
@@ -117,8 +117,15 @@ func TestFramework(t *testing.T) {
 		},
 	}
 
+	expectedFramework := FrameworkSource{
+		Title:       "cis",
+		Description: "CIS Profile",
+		Href:        "profiles/cis/profile.json",
+	}
+
+	require.Equal(t, expectedFramework, framework)
 	require.Equal(t, expectedSettings, implementationsMap)
 
-	_, err = Framework("doesnotexist", allImplementations)
+	_, _, err = ByFramework("doesnotexist", allImplementations)
 	require.EqualError(t, err, "framework doesnotexist is not in control implementations")
 }

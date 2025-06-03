@@ -174,7 +174,7 @@ func prepSettings(t *testing.T, definition oscalTypes.ComponentDefinition) setti
 		}
 		allImplementations = append(allImplementations, *component.ControlImplementations...)
 	}
-	impSettings, err := settings.Framework("cis", allImplementations)
+	impSettings, _, err := settings.ByFramework("cis", allImplementations)
 	require.NoError(t, err)
 	return *impSettings
 }
