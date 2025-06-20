@@ -53,7 +53,7 @@ func ComponentDefinitionsToAssessmentPlan(ctx context.Context, definitions []osc
 		Title:       frameworkSrc.Title,
 		Rlinks: &[]oscalTypes.ResourceLink{
 			{
-				MediaType: "application/json",
+				MediaType: "application/oscal+json",
 				Href:      frameworkSrc.Href,
 			},
 		},
@@ -62,6 +62,19 @@ func ComponentDefinitionsToAssessmentPlan(ctx context.Context, definitions []osc
 		Resources: &[]oscalTypes.Resource{controlSource},
 	}
 	assessmentPlan.BackMatter = &backmatter
+
+	// Add a link to the ReviewedControls to source
+	sourceRef := oscalTypes.Link{
+		Href: fmt.Sprintf("#%s", controlSource.UUID),
+		Rel:  "includes-controls-from-source",
+		Text: "The reviewed controls are derived from the linked OSCAL profile.",
+	}
+
+	if assessmentPlan.ReviewedControls.Links == nil {
+		assessmentPlan.ReviewedControls.Links = &[]oscalTypes.Link{}
+	}
+
+	*assessmentPlan.ReviewedControls.Links = append(*assessmentPlan.ReviewedControls.Links, sourceRef)
 
 	return assessmentPlan, nil
 }
