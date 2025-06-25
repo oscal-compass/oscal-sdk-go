@@ -7,6 +7,8 @@ package transformers
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
 	"os"
 	"path/filepath"
 	"testing"
@@ -46,11 +48,27 @@ func TestComponentDefinitionsToAssessmentPlan(t *testing.T) {
 	require.Contains(t, activities, "etcd_cert_file")
 	require.Contains(t, activities, "etcd_key_file")
 
+	// Backmatter check
+	require.Len(t, *plan.BackMatter.Resources, 1)
+	resources := *plan.BackMatter.Resources
+	require.Equal(t, "cis", resources[0].Title)
+	require.Equal(t, "CIS Profile", resources[0].Description)
+	require.Len(t, *resources[0].Rlinks, 1)
+
+	// Link check
+	require.Len(t, *plan.ReviewedControls.Links, 1)
+	links := *plan.ReviewedControls.Links
+	require.Equal(t, "includes-controls-from-source", links[0].Rel)
+	require.Equal(t, fmt.Sprintf("#%s", resources[0].UUID), links[0].Href)
+
 	// Validate against the schema
 	validator := validation.NewSchemaValidator()
 	oscalModels := oscalTypes.OscalModels{
 		AssessmentPlan: plan,
 	}
+
+	data, _ := json.MarshalIndent(oscalModels, "", " ")
+	fmt.Println(string(data))
 	require.NoError(t, validator.Validate(oscalModels))
 }
 

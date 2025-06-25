@@ -30,12 +30,12 @@ func ExampleComponentDefinitionsToAssessmentPlan() {
 		if err != nil {
 			log.Fatalf("failed to create assessment plan, %v", err)
 		}
-		reviewedControlsJson, err := json.Marshal(assessmentPlan.ReviewedControls)
+		reviewedControlsJson, err := json.Marshal(assessmentPlan.ReviewedControls.ControlSelections)
 		if err != nil {
 			log.Fatalf("failed to marshal reviewed controls, %v", err)
 		}
 		fmt.Println(string(reviewedControlsJson))
 	}
 	// Output:
-	// {"control-selections":[{"include-controls":[{"control-id":"CIS-2.1"}]}]}
+	// [{"include-controls":[{"control-id":"CIS-2.1"}]}]
 }
