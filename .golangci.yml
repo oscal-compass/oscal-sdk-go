@@ -10,18 +10,15 @@ linters:
     - durationcheck
     - errname
     - errorlint
-    - govet
     - importas
-    - ineffassign
     - misspell
     - nilerr
-    - unconvert
     - nolintlint
+    - unconvert
   disable:
     # Revisit issues in the codebase with these linters
     # and re-enable
     - errcheck
-    - staticcheck
     - unused
 
 formatters:
