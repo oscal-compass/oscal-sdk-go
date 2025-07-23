@@ -10,6 +10,7 @@ linters:
     - durationcheck
     - errname
     - errorlint
+    - gosec
     - importas
     - misspell
     - nilerr
@@ -20,6 +21,11 @@ linters:
     # and re-enable
     - errcheck
     - unused
+  exclusions:
+    rules:
+      - path: _test\.go
+        linters:
+          - gosec
 
 formatters:
   enable:
