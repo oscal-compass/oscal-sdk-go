@@ -41,13 +41,13 @@ func NewSchemaValidatorWithVersion(version string) *SchemaValidator {
 func (s *SchemaValidator) Validate(modelData oscalTypes.OscalModels) error {
 	validator, err := oscalValidation.NewValidatorDesiredVersion(modelData, s.oscalVersion)
 	if err != nil {
-		return &ErrValidation{Type: s.id, Model: "", Err: err}
+		return &ValidationError{Type: s.id, Model: "", Err: err}
 	}
 
 	modelType := validator.GetModelType()
 	err = validator.Validate()
 	if err != nil {
-		return &ErrValidation{Type: s.id, Model: modelType, Err: err}
+		return &ValidationError{Type: s.id, Model: modelType, Err: err}
 	}
 
 	return nil

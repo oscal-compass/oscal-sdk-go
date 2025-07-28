@@ -22,8 +22,8 @@ type Validator interface {
 	Validate(oscalTypes.OscalModels) error
 }
 
-// ErrValidation is returned when data is not valid.
-type ErrValidation struct {
+// ValidationError is returned when data is not valid.
+type ValidationError struct {
 	// Type returns the type of validator the error occurred on.
 	Type string
 	// Model returns the model type the error occurred on.
@@ -32,7 +32,7 @@ type ErrValidation struct {
 	Err error
 }
 
-func (e *ErrValidation) Error() string {
+func (e *ValidationError) Error() string {
 	return fmt.Sprintf("%s: %s", e.Type, e.Err.Error())
 }
 

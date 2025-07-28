@@ -1,15 +1,33 @@
+version: "2"
 run:
   # disallows implicit automatic updating of go.mod and fails when any changes to go.mod are needed
   modules-download-mode: readonly
+
 linters:
   enable:
-    - errcheck        # Checks for unchecked errors
-    - gosimple        # Finds code simplifications
-    - govet           # Vet checks for various errors
-    - ineffassign     # Finds useless assignments
-    - staticcheck     # Comprehensive static analysis
-    - unused          # Finds unused variables, functions, etc.
-    - gosec           # Security checks for Go code
-    - goimports       # Checks import statements are formatted
-    - gofmt           # Checks whether code was gofmt-ed
+    - asciicheck
+    - bidichk
+    - durationcheck
+    - errname
+    - errorlint
+    - gosec
+    - importas
+    - misspell
+    - nilerr
+    - nolintlint
+    - unconvert
+  disable:
+    # Revisit issues in the codebase with these linters
+    # and re-enable
+    - errcheck
+    - unused
+  exclusions:
+    rules:
+      - path: _test\.go
+        linters:
+          - gosec
 
+formatters:
+  enable:
+    - gofmt
+    - goimports
