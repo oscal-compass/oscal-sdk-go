@@ -39,3 +39,64 @@ func ExampleComponentDefinitionsToAssessmentPlan() {
 	// Output:
 	// [{"include-controls":[{"control-id":"CIS-2.1"}]}]
 }
+
+func ExampleSSPToAssessmentPlan() {
+	file, err := os.Open("../testdata/test-ssp.json")
+	if err != nil {
+		log.Fatalf("failed to open system security plan, %v", err)
+	}
+	ssp, err := models.NewSystemSecurityPlan(file, validation.NoopValidator{})
+	if err != nil {
+		log.Fatalf("failed to read system security plan, %v", err)
+	}
+
+	if ssp != nil {
+		assessmentPlan, err := transformers.SSPToAssessmentPlan(context.Background(), *ssp, "importPath")
+		if err != nil {
+			log.Fatalf("failed to create assessment plan, %v", err)
+		}
+		reviewedControlsJson, err := json.Marshal(assessmentPlan.ReviewedControls.ControlSelections)
+		if err != nil {
+			log.Fatalf("failed to marshal reviewed controls, %v", err)
+		}
+		fmt.Println(string(reviewedControlsJson))
+	}
+	// Output:
+	// [{"include-controls":[{"control-id":"ex-1"},{"control-id":"ex-2"}]}]
+
+}
+
+func ExampleAssessmentPlanToAssessmentResults() {
+	file, err := os.Open("../testdata/test-ap.json")
+	if err != nil {
+		log.Fatalf("failed to open assessment plan, %v", err)
+	}
+	plan, err := models.NewAssessmentPlan(file, validation.NoopValidator{})
+
+	if err != nil {
+		log.Fatalf("failed to read assessment plan, %v", err)
+	}
+
+	if plan != nil {
+		assessmentResults, err := transformers.AssessmentPlanToAssessmentResults(*plan, "importPath")
+		if err != nil {
+			log.Fatalf("failed to create assessment results, %v", err)
+		}
+
+		href := assessmentResults.ImportAp.Href
+		fmt.Println(href)
+
+		if len(assessmentResults.Results) == 0 {
+			log.Fatalf("failed to find assessment results, %v", err)
+		}
+		reviewedControlsJson, err := json.Marshal(assessmentResults.Results[0].ReviewedControls.ControlSelections)
+		if err != nil {
+			log.Fatalf("failed to marshal reviewed controls, %v", err)
+		}
+		fmt.Println(string(reviewedControlsJson))
+	}
+	// Output:
+	// importPath
+	// [{"include-controls":[{"control-id":"ex-2"},{"control-id":"ex-1"}]},{"include-controls":[{"control-id":"ex-1"}]}]
+
+}
