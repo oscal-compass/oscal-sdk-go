@@ -10,7 +10,7 @@ import (
 	"os"
 	"testing"
 
-	oscaltypes112 "github.com/defenseunicorns/go-oscal/src/types/oscal-1-1-3"
+	oscalTypes "github.com/defenseunicorns/go-oscal/src/types/oscal-1-1-3"
 	"github.com/stretchr/testify/require"
 
 	"github.com/oscal-compass/oscal-sdk-go/extensions"
@@ -96,7 +96,7 @@ func TestMemoryStore_IndexAll(t *testing.T) {
 			require.NoError(t, err)
 
 			if definition.Components == nil {
-				definition.Components = &[]oscaltypes112.DefinedComponent{}
+				definition.Components = &[]oscalTypes.DefinedComponent{}
 			}
 
 			var comps []components.Component
