@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"slices"
+	"strings"
 
 	oscalTypes "github.com/defenseunicorns/go-oscal/src/types/oscal-1-1-3"
 
@@ -55,15 +57,18 @@ func ExampleSSPToAssessmentPlan() {
 		if err != nil {
 			log.Fatalf("failed to create assessment plan, %v", err)
 		}
-		reviewedControlsJson, err := json.Marshal(assessmentPlan.ReviewedControls.ControlSelections)
-		if err != nil {
-			log.Fatalf("failed to marshal reviewed controls, %v", err)
+
+		var controlIds []string
+		for _, accessedControl := range assessmentPlan.ReviewedControls.ControlSelections {
+			for _, includeControl := range *accessedControl.IncludeControls {
+				controlIds = append(controlIds, includeControl.ControlId)
+			}
 		}
-		fmt.Println(string(reviewedControlsJson))
+		slices.Sort(controlIds)
+		fmt.Println(strings.Join(controlIds, ", "))
 	}
 	// Output:
-	// [{"include-controls":[{"control-id":"ex-1"},{"control-id":"ex-2"}]}]
-
+	// ex-1, ex-2
 }
 
 func ExampleAssessmentPlanToAssessmentResults() {
