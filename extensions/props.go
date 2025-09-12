@@ -41,6 +41,8 @@ const (
 	// AssessmentCheckIdProp represents the property name for a check associated to an OSCAL
 	// Observation.
 	AssessmentCheckIdProp = "assessment-check-id"
+	// WaivedRulesProperty represents the property name for Waived Rules.
+	WaivedRulesProperty = "waived"
 )
 
 type findOptions struct {
