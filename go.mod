@@ -3,7 +3,7 @@ module github.com/oscal-compass/oscal-sdk-go
 go 1.24
 
 require (
-	github.com/defenseunicorns/go-oscal v0.6.3
+	github.com/defenseunicorns/go-oscal v0.7.0
 	github.com/stretchr/testify v1.11.1
 )
 
