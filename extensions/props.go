@@ -41,6 +41,8 @@ const (
 	// AssessmentCheckIdProp represents the property name for a check associated to an OSCAL
 	// Observation.
 	AssessmentCheckIdProp = "assessment-check-id"
+	// SkippedRulesProperty represents the property name for Skipped Rules.
+	SkippedRulesProperty = "skipped"
 	// WaivedRulesProperty represents the property name for Waived Rules.
 	WaivedRulesProperty = "waived"
 )
