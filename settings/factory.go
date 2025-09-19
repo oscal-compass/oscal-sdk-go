@@ -55,6 +55,11 @@ func NewAssessmentActivitiesSettings(assessmentActivities []oscalTypes.Activity)
 		if activity.Props == nil {
 			continue
 		}
+		// Skipped activity has a property named 'skipped'
+		skipped, found := extensions.GetTrestleProp(extensions.SkippedRulesProperty, *activity.Props)
+		if found && skipped.Value == "true" {
+			continue
+		}
 
 		paramProps := extensions.FindAllProps(*activity.Props, extensions.WithClass(extensions.TestParameterClass))
 		for _, param := range paramProps {
