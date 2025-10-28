@@ -143,7 +143,7 @@ func GenerateAssessmentResults(plan oscalTypes.AssessmentPlan, opts ...GenerateO
 				// One Observation per Activity Step
 				// Observation Title == Check
 				for _, step := range *activity.Steps {
-					observation := observationManager.createOrGet(step.Title)
+					observation := observationManager.createOrGet(step.Title, activity.Title)
 					for _, method := range methods {
 						observation.Methods = append(observation.Methods, method.Value)
 					}
