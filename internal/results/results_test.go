@@ -334,6 +334,55 @@ func TestGenerateAssessmentResults(t *testing.T) {
 			},
 		},
 		{
+			name: "Success/VerifyCreateOrGetWithProps",
+			inputOptions: []GenerateOption{
+				WithObservations([]oscalTypes.Observation{
+					{
+						Title: "check-1",
+						Props: &[]oscalTypes.Property{
+							{
+								Name:  extensions.AssessmentRuleIdProp,
+								Ns:    extensions.TrestleNameSpace,
+								Value: "rule-1",
+							},
+							{
+								Name:  extensions.AssessmentCheckIdProp,
+								Ns:    extensions.TrestleNameSpace,
+								Value: "check-1",
+							},
+						},
+					},
+				}),
+			},
+			assessmentPlan: defaultAssessmentPlan,
+			assertFunc: func(t *testing.T, results *oscalTypes.AssessmentResults) {
+				require.Len(t, results.Results, 1)
+				result := results.Results[0]
+				require.NotNil(t, result.Observations)
+				require.Len(t, *result.Observations, 1)
+
+				observation := (*result.Observations)[0]
+
+				// Verify that the observation has properties
+				require.NotNil(t, observation.Props)
+				props := *observation.Props
+
+				var ruleIdFound, checkIdFound bool
+				for _, prop := range props {
+					if prop.Name == extensions.AssessmentRuleIdProp && prop.Ns == extensions.TrestleNameSpace {
+						require.Equal(t, "rule-1", prop.Value)
+						ruleIdFound = true
+					}
+					if prop.Name == extensions.AssessmentCheckIdProp && prop.Ns == extensions.TrestleNameSpace {
+						require.Equal(t, "check-1", prop.Value)
+						checkIdFound = true
+					}
+				}
+				require.True(t, ruleIdFound)
+				require.True(t, checkIdFound)
+			},
+		},
+		{
 			name:           "Failure/NoTasksPlan",
 			assessmentPlan: &oscalTypes.AssessmentPlan{},
 			expError:       "assessment plan tasks cannot be empty",

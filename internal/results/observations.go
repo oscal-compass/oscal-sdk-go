@@ -51,7 +51,7 @@ func (o *observationsManager) load(observations []oscalTypes.Observation) {
 }
 
 // createOrGet return an existing observation or a newly created one.
-func (o *observationsManager) createOrGet(checkId string) oscalTypes.Observation {
+func (o *observationsManager) createOrGet(checkId, ruleId string) oscalTypes.Observation {
 	for _, observation := range o.observationsByCheck {
 		// Loop through the Props slice to find the AssessmentCheckIdProp
 		if observation.Props == nil {
@@ -70,10 +70,24 @@ func (o *observationsManager) createOrGet(checkId string) oscalTypes.Observation
 		return observation
 	}
 
+	props := []oscalTypes.Property{
+		{
+			Name:  extensions.AssessmentRuleIdProp,
+			Value: ruleId,
+			Ns:    extensions.TrestleNameSpace,
+		},
+		{
+			Name:  extensions.AssessmentCheckIdProp,
+			Value: checkId,
+			Ns:    extensions.TrestleNameSpace,
+		},
+	}
+
 	emptyObservation := oscalTypes.Observation{
 		UUID:      uuid.NewUUID(),
 		Title:     checkId,
 		Collected: time.Now(),
+		Props:     &props,
 	}
 	o.updateObservation(&emptyObservation)
 	return emptyObservation
