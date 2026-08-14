@@ -1,13 +1,16 @@
-- [Overview](#overview)
-- [Current Maintainers](#current-maintainers)
+### Maintainers
 
-## Overview
+Christopher Butler [butler54](https://github.com/butler54)
 
-This document contains a list of maintainers in `oscal-sdk-go`.
+Takumi Yanagawa [yana1205](https://github.com/yana1205)
 
-## Current Maintainers
-<!-- when editing, remember to update the team @oscal-compass/oscal-sdk-go-maintainers -->
-| Maintainer     | GitHub ID                                  | Affiliation |
-|----------------|--------------------------------------------|-------------|
-| Jennifer Power | [jpower432](https://github.com/jpower432)  | Red Hat     |
-| George Vauter  | [gvauter](https://github.com/gvauter)      | Red Hat     |
+Yuji Watanabe [yuji-watanabe-jp](https://github.com/yuji-watanabe-jp)
+
+Coordinate with:
+
+- [oscal-sdk-go-maintainers](https://github.com/orgs/oscal-compass/teams/oscal-sdk-go-maintainers)
+- [oscal-sdk-go-reviewers](https://github.com/orgs/oscal-compass/teams/oscal-sdk-go-reviewers)
+
+### Emeritus Maintainers
+
+See [EMERITUS.md](EMERITUS.md)
